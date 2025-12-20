@@ -1,0 +1,106 @@
+/* Général */
+body {
+    font-family: system-ui, sans-serif;
+    background: #FBF3E4;
+    margin: 0;
+    padding: 2rem;
+}
+
+h1 {
+    margin-bottom: 1.5rem;
+}
+
+header h1 {
+    text-align: center;
+}
+
+title {
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Menu catégories */
+.filter-btn {
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.filter-btn:hover {
+    background: #eaeaea;
+}
+
+/* Grille d’icônes */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1000px; /* ajuste selon ton goût */
+}
+
+.grid-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+
+.icon {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: transform 0.15s ease;
+}
+
+.icon:hover {
+    transform: scale(1.05);
+}
+
+.icon img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+}
+
+.icon-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 400px;
+    width: 100%;
+}
+
+.modal h2 {
+    margin-top: 0;
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
