@@ -1,11 +1,13 @@
-@extends('layouts.app')
+<x-app-layout>
 
-@section('title', 'Outils de la Ressourcerie')
-
-@section('content')
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            Outils de la Ressourcerie
+        </h2>
+    </x-slot>
 
     {{-- Menu catégories --}}
-    <div class="filters" style="text-align: center; margin-bottom: 2rem;">
+    <div class="filters text-center mb-8">
         <button class="filter-btn" onclick="filterSites('all')">Tous</button>
 
         @foreach ($categories as $categorie)
@@ -15,7 +17,6 @@
                 {{ ucfirst(str_replace('_', ' ', $categorie)) }}
             </button>
         @endforeach
-    
     </div>
 
     {{-- Grille d’icônes --}}
@@ -39,7 +40,6 @@
         </div>
     </div>
 
-
     {{-- Modal --}}
     <div class="modal" id="modal">
         <div class="modal-content">
@@ -50,28 +50,27 @@
         </div>
     </div>
 
-@endsection
+    {{-- Scripts --}}
+    <script>
+        function filterSites(categorie) {
+            document.querySelectorAll('.icon').forEach(icon => {
+                icon.style.display =
+                    (categorie === 'all' || icon.dataset.categorie === categorie)
+                    ? 'block'
+                    : 'none';
+            });
+        }
 
-@section('scripts')
-<script>
-    function filterSites(categorie) {
-        document.querySelectorAll('.icon').forEach(icon => {
-            icon.style.display =
-                (categorie === 'all' || icon.dataset.categorie === categorie)
-                ? 'block'
-                : 'none';
-        });
-    }
+        function openModal(title, description, url) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-description').innerText = description;
+            document.getElementById('modal-link').href = url;
+            document.getElementById('modal').style.display = 'flex';
+        }
 
-    function openModal(title, description, url) {
-        document.getElementById('modal-title').innerText = title;
-        document.getElementById('modal-description').innerText = description;
-        document.getElementById('modal-link').href = url;
-        document.getElementById('modal').style.display = 'flex';
-    }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+    </script>
 
-    function closeModal() {
-        document.getElementById('modal').style.display = 'none';
-    }
-</script>
-@endsection
+</x-app-layout>
