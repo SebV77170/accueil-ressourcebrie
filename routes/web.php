@@ -20,9 +20,24 @@ Route::middleware('auth')->group(function () {
 
 
 
-Route::middleware(['auth:web'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/sites', [SiteController::class, 'index'])->name('sites.index');
 });
+
+use App\Http\Controllers\CaTaskController;
+
+Route::prefix('ca/tasks')->name('ca.tasks.')->group(function () {
+
+    Route::get('/', [CaTaskController::class, 'index'])->name('index');
+    Route::post('/', [CaTaskController::class, 'store'])->name('store');
+    Route::put('/{id}', [CaTaskController::class, 'update'])->name('update');
+
+    Route::patch('/{id}/complete', [CaTaskController::class, 'complete'])->name('complete');
+    Route::patch('/{id}/archive', [CaTaskController::class, 'archive'])->name('archive');
+
+    Route::delete('/{id}', [CaTaskController::class, 'destroy'])->name('destroy');
+});
+
 
 
 

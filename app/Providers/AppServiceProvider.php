@@ -2,31 +2,19 @@
 
 namespace App\Providers;
 
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
-use App\Models\Site;
-use App\Policies\SitePolicy;
+use Illuminate\Support\ServiceProvider;
+use App\Domain\Tasks\Repositories\TaskRepository;
+use App\Domain\Tasks\Repositories\EloquentTaskRepository;
 
-class AuthServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * The policy mappings for the application.
-     *
-     * @var array<class-string, class-string>
-     */
-    protected $policies = [
-Site::class => SitePolicy::class,
-    ];
+    public function register(): void
+    {
+        $this->app->bind(TaskRepository::class, EloquentTaskRepository::class);
+    }
 
-    /**
-     * Register any authentication / authorization services.
-     */
     public function boot(): void
     {
-        $this->registerPolicies();
-
-        Gate::define('ca-access', function ($user) {
-            return in_array($user->role, ['admin', 'ca']);
-        });
+        //
     }
 }
