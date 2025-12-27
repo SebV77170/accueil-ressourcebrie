@@ -3,6 +3,9 @@ namespace App\Domain\Tasks\Repositories;
 
 use App\Models\CaTask as TaskModel;
 use App\Domain\Tasks\Entities\Task;
+use App\Models\TaskComment as CommentModel;
+use App\Domain\Tasks\Entities\TaskComment;
+
 
 class EloquentTaskRepository implements TaskRepository
 {
@@ -58,16 +61,33 @@ class EloquentTaskRepository implements TaskRepository
 
     private function toEntity(TaskModel $m): Task
     {
-        return new Task(
-            id: $m->id,
-            titre: $m->titre,
-            description: $m->description,
-            responsables: $m->responsables,
-            commentaire: $m->commentaire,
-            estTerminee: $m->est_terminee,
-            estArchivee: $m->est_archivee,
-            dateEffectuee: $m->date_effectuee,
-            dateCreation: $m->created_at,
-        );
+         $task = new Task(
+        id: $m->id,
+        titre: $m->titre,
+        description: $m->description,
+        responsables: $m->responsables,
+        commentaire: $m->commentaire,
+        estTerminee: $m->est_terminee,
+        estArchivee: $m->est_archivee,
+        dateEffectuee: $m->date_effectuee,
+        dateCreation: $m->created_at,
+    );
+
+    // Charger les commentaires
+    $task->comments = CommentModel::where('task_id', $m->id)
+        ->orderByDesc('created_at')
+        ->get()
+        ->map(fn ($c) => new TaskComment(
+            id: $c->id,
+            taskId: $c->task_id,
+            content: $c->content,
+            userId: $c->user_id,
+            createdAt: $c->created_at,
+        ))
+        ->toArray();
+
+    return $task;
+
+
     }
 }

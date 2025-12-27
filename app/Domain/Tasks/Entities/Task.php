@@ -1,9 +1,11 @@
-
 <?php
+
 namespace App\Domain\Tasks\Entities;
 
 class Task
 {
+    public array $comments = [];
+
     public function __construct(
         public ?int $id,
         public string $titre,

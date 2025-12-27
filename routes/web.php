@@ -38,6 +38,12 @@ Route::prefix('ca/tasks')->name('ca.tasks.')->group(function () {
     Route::delete('/{id}', [CaTaskController::class, 'destroy'])->name('destroy');
 });
 
+use App\Http\Controllers\TaskCommentController;
+
+Route::post('/ca/tasks/{task}/comments', [TaskCommentController::class, 'store'])
+    ->name('ca.tasks.comments.store');
+
+
 
 
 

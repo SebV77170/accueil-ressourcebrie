@@ -31,7 +31,7 @@
                             <th class="p-2 text-left">✔</th>
                             <th class="p-2 text-left">Titre</th>
                             <th class="p-2 text-left">Responsables</th>
-                            <th class="p-2 text-left">Commentaire</th>
+                            <th class="p-2 text-left">Description</th>
                             <th class="p-2 text-left">Créée</th>
                             <th class="p-2 text-left">Faite</th>
                             <th class="p-2 text-right">Actions</th>
@@ -65,9 +65,9 @@
                                 {{ $task->responsables ? implode(', ', $task->responsables) : '-' }}
                             </td>
 
-                            {{-- COMMENTAIRE --}}
+                            {{-- DESCRIPTION --}}
                             <td class="p-2">
-                                {{ $task->commentaire }}
+                                {{ $task->description }}
                             </td>
 
                             {{-- CRÉÉE --}}
@@ -82,6 +82,49 @@
 
                             {{-- ACTIONS --}}
                             <td class="p-2 text-right space-x-1">
+
+                                <button
+                                    x-data
+                                    @click="$dispatch('open-modal', 'comments-{{ $task->id }}')"
+                                    class="px-2 py-1 bg-indigo-500 text-white rounded">
+                                    💬
+                                </button>
+
+                                <x-modal name="comments-{{ $task->id }}">
+                                    <div class="p-6 space-y-4">
+
+                                        <h2 class="text-lg font-bold">Commentaires</h2>
+
+                                       {{-- LISTE DES COMMENTAIRES --}}
+                                        <div class="max-h-72 overflow-y-auto space-y-2">
+                                            @forelse($task->comments as $comment)
+                                                <div class="border rounded p-2">
+                                                    <div class="text-sm text-gray-600">
+                                                        {{ $comment->createdAt->format('d/m/Y H:i') }}
+                                                    </div>
+
+                                                    <div>{{ $comment->content }}</div>
+                                                </div>
+                                            @empty
+                                                <p class="text-gray-500 text-sm">Aucun commentaire.</p>
+                                            @endforelse
+                                        </div>
+
+                                        {{-- FORMULAIRE --}}
+                                        <form method="POST" action="{{ route('ca.tasks.comments.store', $task->id) }}">
+                                            @csrf
+
+                                            <textarea name="content" class="w-full border rounded" placeholder="Votre commentaire..."></textarea>
+
+                                            <div class="mt-2 flex justify-end">
+                                                <x-primary-button>Ajouter</x-primary-button>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </x-modal>
+
+
 
                                 {{-- EDIT --}}
                                 <button

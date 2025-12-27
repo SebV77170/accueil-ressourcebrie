@@ -21,4 +21,10 @@ class CaTask extends Model
         'est_archivee'   => 'boolean',
         'date_effectuee' => 'datetime',
     ];
+
+    public function comments()
+{
+    return $this->hasMany(TaskComment::class, 'task_id')->latest();
+}
+
 }
