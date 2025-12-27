@@ -4,6 +4,8 @@ namespace App\Domain\Tasks\Repositories;
 
 use App\Models\TaskComment as CommentModel;
 use App\Domain\Tasks\Entities\TaskComment;
+use App\Models\User;
+
 
 class EloquentTaskCommentRepository implements TaskCommentRepository
 {
@@ -29,12 +31,20 @@ class EloquentTaskCommentRepository implements TaskCommentRepository
 
     private function toEntity(CommentModel $m): TaskComment
     {
-        return new TaskComment(
-            id: $m->id,
-            taskId: $m->task_id,
-            content: $m->content,
-            userId: $m->user_id,
-            createdAt: $m->created_at,
-        );
+        $comment = new TaskComment(
+        id: $m->id,
+        taskId: $m->task_id,
+        content: $m->content,
+        userId: $m->user_id,
+        createdAt: $m->created_at,
+    );
+
+    // Charger le nom de l'utilisateur si disponible
+    if ($m->user_id) {
+        $user = User::find($m->user_id);
+        $comment->userName = $user?->name;
+    }
+
+    return $comment;
     }
 }

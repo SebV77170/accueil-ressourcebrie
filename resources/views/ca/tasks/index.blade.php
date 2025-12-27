@@ -87,7 +87,7 @@
                                     x-data
                                     @click="$dispatch('open-modal', 'comments-{{ $task->id }}')"
                                     class="px-2 py-1 bg-indigo-500 text-white rounded">
-                                    💬
+                                    💬({{ $task->commentsCount }})
                                 </button>
 
                                 <x-modal name="comments-{{ $task->id }}">
@@ -101,8 +101,11 @@
                                                 <div class="border rounded p-2">
                                                     <div class="text-sm text-gray-600">
                                                         {{ $comment->createdAt->format('d/m/Y H:i') }}
-                                                    </div>
 
+                                                        @if($comment->userName)
+                                                            — {{ $comment->userName }}
+                                                        @endif
+                                                    </div>
                                                     <div>{{ $comment->content }}</div>
                                                 </div>
                                             @empty

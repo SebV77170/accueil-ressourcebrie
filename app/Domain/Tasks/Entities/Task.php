@@ -5,6 +5,7 @@ namespace App\Domain\Tasks\Entities;
 class Task
 {
     public array $comments = [];
+    public int $commentsCount = 0;
 
     public function __construct(
         public ?int $id,

@@ -5,6 +5,7 @@ use App\Models\CaTask as TaskModel;
 use App\Domain\Tasks\Entities\Task;
 use App\Models\TaskComment as CommentModel;
 use App\Domain\Tasks\Entities\TaskComment;
+use App\Models\User;
 
 
 class EloquentTaskRepository implements TaskRepository
@@ -60,8 +61,8 @@ class EloquentTaskRepository implements TaskRepository
     }
 
     private function toEntity(TaskModel $m): Task
-    {
-         $task = new Task(
+{
+    $task = new Task(
         id: $m->id,
         titre: $m->titre,
         description: $m->description,
@@ -77,17 +78,29 @@ class EloquentTaskRepository implements TaskRepository
     $task->comments = CommentModel::where('task_id', $m->id)
         ->orderByDesc('created_at')
         ->get()
-        ->map(fn ($c) => new TaskComment(
-            id: $c->id,
-            taskId: $c->task_id,
-            content: $c->content,
-            userId: $c->user_id,
-            createdAt: $c->created_at,
-        ))
+        ->map(function ($c) {
+
+            $comment = new TaskComment(
+                id: $c->id,
+                taskId: $c->task_id,
+                content: $c->content,
+                userId: $c->user_id,
+                createdAt: $c->created_at,
+            );
+
+            if ($c->user_id) {
+                $user = User::find($c->user_id);
+                $comment->userName = $user?->name;
+            }
+
+            return $comment;
+        })
         ->toArray();
 
-    return $task;
+        $task->commentsCount = count($task->comments);
+
+    return $task;  
+}
 
 
-    }
 }
