@@ -7,6 +7,8 @@ use App\Domain\Tasks\Repositories\TaskRepository;
 use App\Domain\Tasks\Repositories\EloquentTaskRepository;
 use App\Domain\Tasks\Repositories\TaskCommentRepository;
 use App\Domain\Tasks\Repositories\EloquentTaskCommentRepository;
+use App\Domain\Sites\Repositories\SiteRepository;
+use App\Domain\Sites\Repositories\EloquentSiteRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,6 +16,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(TaskRepository::class, EloquentTaskRepository::class);
         $this->app->bind(TaskCommentRepository::class, EloquentTaskCommentRepository::class);
+        $this->app->bind(
+        SiteRepository::class,
+        EloquentSiteRepository::class
+    );
     }
 
     public function boot(): void

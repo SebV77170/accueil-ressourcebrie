@@ -24,6 +24,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/sites', [SiteController::class, 'index'])->name('sites.index');
 });
 
+Route::post('/sites', [SiteController::class, 'store'])
+    ->name('sites.store');
+
+Route::put('/sites/{id}', [SiteController::class, 'update']);
+Route::delete('/sites/{id}', [SiteController::class, 'destroy']);
+
+
+
 use App\Http\Controllers\CaTaskController;
 
 Route::prefix('ca/tasks')->name('ca.tasks.')->group(function () {
@@ -42,6 +50,8 @@ use App\Http\Controllers\TaskCommentController;
 
 Route::post('/ca/tasks/{task}/comments', [TaskCommentController::class, 'store'])
     ->name('ca.tasks.comments.store');
+
+
 
 
 

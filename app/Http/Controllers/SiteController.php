@@ -2,21 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Site;
+use App\Services\Sites\SiteService;
+use Illuminate\Http\Request;
+use App\Http\Requests\StoreSiteRequest;
 
 class SiteController extends Controller
 {
+    public function __construct(
+        private SiteService $service
+    ) {}
+
     public function index()
     {
-        $sites = Site::orderBy('categorie')
-            ->orderBy('nom')
-            ->get();
+        return view('sites.index', [
+            'sites' => $this->service->list(),
+            'categories' => $this->service->categories(),
+        ]);
+    }
 
-        $categories = Site::select('categorie')
-            ->distinct()
-            ->orderBy('categorie')
-            ->pluck('categorie');
+    
 
-        return view('sites.index', compact('sites', 'categories'));
+    public function store(StoreSiteRequest $request)
+    {
+        $this->service->create($request->validated());
+    }
+
+    public function update(Request $request, int $id)
+    {
+        $this->service->update($id, $request->validated());
+        return redirect()->back();
+    }
+
+    public function destroy(int $id)
+    {
+        $this->service->delete($id);
+        return redirect()->back();
     }
 }
