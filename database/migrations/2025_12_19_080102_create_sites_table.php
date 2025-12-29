@@ -24,6 +24,9 @@ return new class extends Migration
             $table->text('description');
             $table->timestamps(); // created_at + updated_at
             $table->string('icone')->nullable();
+            $table->foreignId('category_id')
+                ->constrained('categories')
+                ->cascadeOnDelete();
 
         });
     }

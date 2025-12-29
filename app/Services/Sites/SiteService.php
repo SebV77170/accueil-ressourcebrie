@@ -27,7 +27,7 @@ class SiteService
                 null,
                 $data['nom'],
                 $data['url'],
-                $data['categorie'],
+                $data['category_id'],
                 $data['description'] ?? null
             )
         );
@@ -40,7 +40,7 @@ class SiteService
                 $id,
                 $data['nom'],
                 $data['url'],
-                $data['categorie'],
+                $data['category_id'],
                 $data['description'] ?? null
             )
         );

@@ -7,7 +7,7 @@ class Site
         public ?int $id,
         public string $nom,
         public string $url,
-        public string $categorie,
+        public int $categoryId,
         public ?string $description = null,
     ) {}
 }

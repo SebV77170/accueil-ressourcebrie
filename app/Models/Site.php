@@ -12,8 +12,13 @@ class Site extends Model
         'nom',
         'description',
         'url',
-        'categorie',
+        'category_id',
     ];
+
+    public function category(): BelongsTo
+{
+    return $this->belongsTo(Category::class, 'category_id');
+}
 }
 
 ?>

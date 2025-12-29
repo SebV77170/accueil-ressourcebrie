@@ -27,7 +27,7 @@ class EloquentSiteRepository implements SiteRepository
         $model = SiteModel::create([
             'nom' => $site->nom,
             'url' => $site->url,
-            'categorie' => $site->categorie,
+            'category_id' => $site->categoryId,
             'description' => $site->description,
         ]);
 
@@ -40,7 +40,7 @@ class EloquentSiteRepository implements SiteRepository
         $model->update([
             'nom' => $site->nom,
             'url' => $site->url,
-            'categorie' => $site->categorie,
+            'category_id' => $site->categoryId,
             'description' => $site->description,
         ]);
 
@@ -67,7 +67,7 @@ class EloquentSiteRepository implements SiteRepository
             $model->id,
             $model->nom,
             $model->url,
-            $model->categorie,
+            $model->category_id,
             $model->description
         );
     }

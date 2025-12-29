@@ -4,13 +4,20 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreSiteRequest extends FormRequest
+class UpdateSiteRequest extends FormRequest
 {
+    /**
+     * Autorisation de la requête
+     */
     public function authorize(): bool
     {
+        // À affiner plus tard avec une Policy si besoin
         return true;
     }
 
+    /**
+     * Règles de validation
+     */
     public function rules(): array
     {
         return [

@@ -31,6 +31,12 @@ Route::put('/sites/{id}', [SiteController::class, 'update']);
 Route::delete('/sites/{id}', [SiteController::class, 'destroy']);
 
 
+use App\Http\Controllers\CategoryController;
+
+Route::post('/categories', [CategoryController::class, 'store']);
+
+
+
 
 use App\Http\Controllers\CaTaskController;
 
