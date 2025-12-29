@@ -9,7 +9,7 @@ class EloquentSiteRepository implements SiteRepository
 {
     public function all(): array
     {
-        return SiteModel::orderBy('categorie')
+        return SiteModel::orderBy('category_id')
             ->orderBy('nom')
             ->get()
             ->map(fn ($m) => $this->toEntity($m))
