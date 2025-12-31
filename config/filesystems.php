@@ -60,6 +60,15 @@ return [
             'report' => false,
         ],
 
+        'webdav' => [
+            'driver'   => 'webdav',
+            'base_uri' => env('WEBDAV_URL'),
+            'username' => env('WEBDAV_USERNAME'),
+            'password' => env('WEBDAV_PASSWORD'),
+            'root'     => env('WEBDAV_ROOT', '/'),
+        ],
+
+
     ],
 
     /*
