@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Domain\Tasks\Entities;
 
 class Task
