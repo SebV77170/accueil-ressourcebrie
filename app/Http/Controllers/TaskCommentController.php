@@ -20,4 +20,16 @@ class TaskCommentController extends Controller
 
         return back();
     }
+
+    public function storeForSubTask($taskId, $subTaskId, StoreTaskCommentRequest $request)
+    {
+        $this->service->addForSubTask(
+            taskId: $taskId,
+            subTaskId: $subTaskId,
+            content: $request->validated()['content'],
+            userId: Auth::id()
+        );
+
+        return back();
+    }
 }

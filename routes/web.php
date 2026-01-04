@@ -39,6 +39,8 @@ Route::post('/categories', [CategoryController::class, 'store']);
 
 
 use App\Http\Controllers\CaTaskController;
+use App\Http\Controllers\SubTaskController;
+use App\Http\Controllers\TaskCommentController;
 
 Route::prefix('ca/tasks')->name('ca.tasks.')->group(function () {
 
@@ -52,10 +54,19 @@ Route::prefix('ca/tasks')->name('ca.tasks.')->group(function () {
     Route::delete('/{id}', [CaTaskController::class, 'destroy'])->name('destroy');
 });
 
-use App\Http\Controllers\TaskCommentController;
-
 Route::post('/ca/tasks/{task}/comments', [TaskCommentController::class, 'store'])
     ->name('ca.tasks.comments.store');
+
+Route::prefix('ca/tasks/{task}/sub-tasks')->name('ca.tasks.subTasks.')->group(function () {
+    Route::post('/', [SubTaskController::class, 'store'])->name('store');
+    Route::put('/{subTask}', [SubTaskController::class, 'update'])->name('update');
+    Route::patch('/{subTask}/complete', [SubTaskController::class, 'complete'])->name('complete');
+    Route::patch('/{subTask}/archive', [SubTaskController::class, 'archive'])->name('archive');
+    Route::delete('/{subTask}', [SubTaskController::class, 'destroy'])->name('destroy');
+});
+
+Route::post('/ca/tasks/{task}/sub-tasks/{subTask}/comments', [TaskCommentController::class, 'storeForSubTask'])
+    ->name('ca.tasks.subTasks.comments.store');
 
 
 

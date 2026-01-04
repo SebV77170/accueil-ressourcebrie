@@ -3,9 +3,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CaTask extends Model
+class CaSubTask extends Model
 {
     protected $fillable = [
+        'task_id',
         'titre',
         'description',
         'responsables',
@@ -22,14 +23,13 @@ class CaTask extends Model
         'date_effectuee' => 'datetime',
     ];
 
+    public function task()
+    {
+        return $this->belongsTo(CaTask::class, 'task_id');
+    }
+
     public function comments()
     {
-        return $this->hasMany(TaskComment::class, 'task_id')->latest();
+        return $this->hasMany(TaskComment::class, 'sub_task_id')->latest();
     }
-
-    public function subTasks()
-    {
-        return $this->hasMany(CaSubTask::class, 'task_id')->latest();
-    }
-
 }

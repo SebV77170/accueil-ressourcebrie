@@ -1,31 +1,36 @@
 <?php
 namespace App\Domain\Tasks\Repositories;
 
-use App\Models\CaTask as TaskModel;
-use App\Domain\Tasks\Entities\Task;
-use App\Models\TaskComment as CommentModel;
+use App\Domain\Tasks\Entities\SubTask;
 use App\Domain\Tasks\Entities\TaskComment;
+use App\Models\CaSubTask as SubTaskModel;
+use App\Models\TaskComment as CommentModel;
 use App\Models\User;
 
-
-class EloquentTaskRepository implements TaskRepository
+class EloquentSubTaskRepository implements SubTaskRepository
 {
-    public function all(): array
+    public function forTask(int $taskId): array
     {
-        return TaskModel::latest()->get()
+        return SubTaskModel::where('task_id', $taskId)
+            ->latest()
+            ->get()
             ->map(fn ($m) => $this->toEntity($m))
             ->toArray();
     }
 
-    public function find(int $id): ?Task
+    public function find(int $taskId, int $id): ?SubTask
     {
-        $m = TaskModel::find($id);
-        return $m ? $this->toEntity($m) : null;
+        $model = SubTaskModel::where('task_id', $taskId)
+            ->where('id', $id)
+            ->first();
+
+        return $model ? $this->toEntity($model) : null;
     }
 
-    public function store(Task $task): Task
+    public function store(SubTask $task): SubTask
     {
-        $model = TaskModel::create([
+        $model = SubTaskModel::create([
+            'task_id'        => $task->taskId,
             'titre'          => $task->titre,
             'description'    => $task->description,
             'responsables'   => $task->responsables,
@@ -38,9 +43,11 @@ class EloquentTaskRepository implements TaskRepository
         return $this->toEntity($model);
     }
 
-    public function update(Task $task): Task
+    public function update(SubTask $task): SubTask
     {
-        $model = TaskModel::findOrFail($task->id);
+        $model = SubTaskModel::where('task_id', $task->taskId)
+            ->where('id', $task->id)
+            ->firstOrFail();
 
         $model->update([
             'titre'          => $task->titre,
@@ -55,15 +62,16 @@ class EloquentTaskRepository implements TaskRepository
         return $this->toEntity($model);
     }
 
-    public function delete(int $id): void
+    public function delete(int $taskId, int $id): void
     {
-        TaskModel::where('id', $id)->delete();
+        SubTaskModel::where('task_id', $taskId)->where('id', $id)->delete();
     }
 
-    private function toEntity(TaskModel $m): Task
+    private function toEntity(SubTaskModel $m): SubTask
     {
-        $task = new Task(
+        $task = new SubTask(
             id: $m->id,
+            taskId: $m->task_id,
             titre: $m->titre,
             description: $m->description,
             responsables: $m->responsables,
@@ -74,9 +82,7 @@ class EloquentTaskRepository implements TaskRepository
             dateCreation: $m->created_at,
         );
 
-        // Charger les commentaires
-        $task->comments = CommentModel::where('task_id', $m->id)
-            ->whereNull('sub_task_id')
+        $task->comments = CommentModel::where('sub_task_id', $m->id)
             ->orderByDesc('created_at')
             ->get()
             ->map(function ($c) {

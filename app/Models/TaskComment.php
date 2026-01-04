@@ -8,6 +8,7 @@ class TaskComment extends Model
 {
     protected $fillable = [
         'task_id',
+        'sub_task_id',
         'content',
         'user_id',
     ];
@@ -15,6 +16,11 @@ class TaskComment extends Model
     public function task()
     {
         return $this->belongsTo(CaTask::class, 'task_id');
+    }
+
+    public function subTask()
+    {
+        return $this->belongsTo(CaSubTask::class, 'sub_task_id');
     }
 
     public function user()

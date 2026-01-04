@@ -3,14 +3,41 @@ namespace App\Services\Tasks;
 
 use App\Domain\Tasks\Entities\Task;
 use App\Domain\Tasks\Repositories\TaskRepository;
+use App\Domain\Tasks\Repositories\SubTaskRepository;
 
 class TaskService
 {
-    public function __construct(private TaskRepository $repo) {}
+    public function __construct(
+        private TaskRepository $repo,
+        private SubTaskRepository $subTaskRepo,
+    ) {}
 
     public function list()
     {
-        return $this->repo->all();
+        $tasks = $this->repo->all();
+
+        foreach ($tasks as $task) {
+            $task->subTasks = $this->subTaskRepo->forTask($task->id);
+            $task->subTasksCount = count($task->subTasks);
+            $task->completedSubTasksCount = collect($task->subTasks)
+                ->filter(fn ($s) => $s->estTerminee)
+                ->count();
+
+            if ($task->subTasksCount > 0) {
+                $isComplete = $task->completedSubTasksCount === $task->subTasksCount;
+
+                if ($task->estTerminee !== $isComplete || ($isComplete && ! $task->dateEffectuee)) {
+                    $task->estTerminee = $isComplete;
+                    $task->dateEffectuee = $isComplete
+                        ? ($task->dateEffectuee ?? new \DateTime())
+                        : null;
+
+                    $this->repo->update($task);
+                }
+            }
+        }
+
+        return $tasks;
     }
 
     public function create(array $data): Task
@@ -54,9 +81,18 @@ class TaskService
             throw new \RuntimeException("Task not found");
         }
 
-        $task->estTerminee
-            ? $task->uncomplete()
-            : $task->complete();
+        $subTasks = $this->subTaskRepo->forTask($id);
+
+        if (count($subTasks) > 0) {
+            $task->estTerminee = collect($subTasks)->every(fn ($s) => $s->estTerminee);
+            $task->dateEffectuee = $task->estTerminee
+                ? ($task->dateEffectuee ?? new \DateTime())
+                : null;
+
+            return $this->repo->update($task);
+        }
+
+        $task->uncomplete();
 
         return $this->repo->update($task);
     }

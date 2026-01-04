@@ -1,16 +1,14 @@
 <?php
 namespace App\Domain\Tasks\Entities;
 
-class Task
+class SubTask
 {
     public array $comments = [];
     public int $commentsCount = 0;
-    public array $subTasks = [];
-    public int $subTasksCount = 0;
-    public int $completedSubTasksCount = 0;
 
     public function __construct(
         public ?int $id,
+        public int $taskId,
         public string $titre,
         public ?string $description,
         public ?array $responsables,
@@ -36,7 +34,7 @@ class Task
     public function archive(): void
     {
         if (! $this->estTerminee) {
-            throw new \DomainException("Impossible d'archiver une tâche non terminée.");
+            throw new \DomainException("Impossible d'archiver une sous-tâche non terminée.");
         }
 
         $this->estArchivee = true;
