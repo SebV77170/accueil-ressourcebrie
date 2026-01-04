@@ -170,7 +170,7 @@
                             </td>
                         </tr>
 
-                        <tr x-show="open" x-cloak class="bg-gray-50 border-b">
+                        <tr x-show="open" x-transition x-cloak class="bg-gray-50 border-b hidden">
                             <td colspan="8" class="p-4">
                                 <div class="flex items-center justify-between">
                                     <div>
