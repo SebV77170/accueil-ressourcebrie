@@ -25,10 +25,12 @@ class EloquentTaskRepository implements TaskRepository
 
     public function store(Task $task): Task
     {
+        $responsables = array_map('intval', $task->responsables ?? []);
+
         $model = TaskModel::create([
             'titre'          => $task->titre,
             'description'    => $task->description,
-            'responsables'   => $task->responsables,
+            'responsables'   => $responsables,
             'commentaire'    => $task->commentaire,
             'est_terminee'   => $task->estTerminee,
             'est_archivee'   => $task->estArchivee,
@@ -41,11 +43,12 @@ class EloquentTaskRepository implements TaskRepository
     public function update(Task $task): Task
     {
         $model = TaskModel::findOrFail($task->id);
+        $responsables = array_map('intval', $task->responsables ?? []);
 
         $model->update([
             'titre'          => $task->titre,
             'description'    => $task->description,
-            'responsables'   => $task->responsables,
+            'responsables'   => $responsables,
             'commentaire'    => $task->commentaire,
             'est_terminee'   => $task->estTerminee,
             'est_archivee'   => $task->estArchivee,
@@ -73,6 +76,8 @@ class EloquentTaskRepository implements TaskRepository
             dateEffectuee: $m->date_effectuee,
             dateCreation: $m->created_at,
         );
+        $task->responsables = array_map('intval', $task->responsables ?? []);
+        $task->responsablesNoms = $this->userNames($task->responsables);
 
         // Charger les commentaires
         $task->comments = CommentModel::where('task_id', $m->id)
@@ -101,5 +106,17 @@ class EloquentTaskRepository implements TaskRepository
         $task->commentsCount = count($task->comments);
 
         return $task;
+    }
+
+    private function userNames(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        return User::whereIn('id', $ids)
+            ->orderBy('name')
+            ->pluck('name')
+            ->toArray();
     }
 }

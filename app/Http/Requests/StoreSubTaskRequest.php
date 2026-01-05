@@ -16,6 +16,7 @@ class StoreSubTaskRequest extends FormRequest
             'titre'        => ['required', 'string', 'max:255'],
             'description'  => ['nullable', 'string'],
             'responsables' => ['nullable', 'array'],
+            'responsables.*' => ['integer', 'exists:users,id'],
             'commentaire'  => ['nullable', 'string'],
         ];
     }

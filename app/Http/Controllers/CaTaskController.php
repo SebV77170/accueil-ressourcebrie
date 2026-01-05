@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Services\Tasks\TaskService;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Models\User;
 
 class CaTaskController extends Controller
 {
@@ -12,7 +13,9 @@ class CaTaskController extends Controller
     public function index()
     {
         $tasks = $this->service->list();
-        return view('ca.tasks.index', compact('tasks'));
+        $users = User::orderBy('name')->get();
+
+        return view('ca.tasks.index', compact('tasks', 'users'));
     }
 
     public function store(StoreTaskRequest $request)

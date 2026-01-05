@@ -5,6 +5,7 @@ class SubTask
 {
     public array $comments = [];
     public int $commentsCount = 0;
+    public array $responsablesNoms = [];
 
     public function __construct(
         public ?int $id,

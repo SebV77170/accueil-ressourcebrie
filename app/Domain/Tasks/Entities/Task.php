@@ -8,6 +8,7 @@ class Task
     public array $subTasks = [];
     public int $subTasksCount = 0;
     public int $completedSubTasksCount = 0;
+    public array $responsablesNoms = [];
 
     public function __construct(
         public ?int $id,
