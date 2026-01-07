@@ -29,11 +29,13 @@ class EloquentSubTaskRepository implements SubTaskRepository
 
     public function store(SubTask $task): SubTask
     {
+        $responsables = array_map('intval', $task->responsables ?? []);
+
         $model = SubTaskModel::create([
             'task_id'        => $task->taskId,
             'titre'          => $task->titre,
             'description'    => $task->description,
-            'responsables'   => $task->responsables,
+            'responsables'   => $responsables,
             'commentaire'    => $task->commentaire,
             'est_terminee'   => $task->estTerminee,
             'est_archivee'   => $task->estArchivee,
@@ -48,11 +50,12 @@ class EloquentSubTaskRepository implements SubTaskRepository
         $model = SubTaskModel::where('task_id', $task->taskId)
             ->where('id', $task->id)
             ->firstOrFail();
+        $responsables = array_map('intval', $task->responsables ?? []);
 
         $model->update([
             'titre'          => $task->titre,
             'description'    => $task->description,
-            'responsables'   => $task->responsables,
+            'responsables'   => $responsables,
             'commentaire'    => $task->commentaire,
             'est_terminee'   => $task->estTerminee,
             'est_archivee'   => $task->estArchivee,
@@ -81,6 +84,8 @@ class EloquentSubTaskRepository implements SubTaskRepository
             dateEffectuee: $m->date_effectuee,
             dateCreation: $m->created_at,
         );
+        $task->responsables = array_map('intval', $task->responsables ?? []);
+        $task->responsablesNoms = $this->userNames($task->responsables);
 
         $task->comments = CommentModel::where('sub_task_id', $m->id)
             ->orderByDesc('created_at')
@@ -107,5 +112,17 @@ class EloquentSubTaskRepository implements SubTaskRepository
         $task->commentsCount = count($task->comments);
 
         return $task;
+    }
+
+    private function userNames(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        return User::whereIn('id', $ids)
+            ->orderBy('name')
+            ->pluck('name')
+            ->toArray();
     }
 }

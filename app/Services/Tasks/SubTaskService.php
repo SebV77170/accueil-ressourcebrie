@@ -44,7 +44,7 @@ class SubTaskService
 
         $task->titre        = $data['titre']        ?? $task->titre;
         $task->description  = $data['description']  ?? $task->description;
-        $task->responsables = $data['responsables'] ?? $task->responsables;
+        $task->responsables = $data['responsables'] ?? [];
         $task->commentaire  = $data['commentaire']  ?? $task->commentaire;
 
         $updated = $this->repo->update($task);

@@ -78,7 +78,7 @@
 
                                     {{-- RESPONSABLES --}}
                                     <td class="p-2">
-                                        {{ $task->responsables ? implode(', ', $task->responsables) : '-' }}
+                                        {{ $task->responsablesNoms ? implode(', ', $task->responsablesNoms) : '-' }}
                                     </td>
 
                                     {{-- DESCRIPTION --}}
@@ -171,6 +171,19 @@
                                                     </div>
 
                                                     <div>
+                                                        <label class="block text-sm font-medium">Responsables</label>
+                                                        <select name="responsables[]" multiple class="mt-1 w-full border rounded">
+                                                            @foreach($users as $user)
+                                                                <option value="{{ $user->id }}"
+                                                                    @selected(in_array($user->id, old('responsables', $task->responsables ?? [])))>
+                                                                    {{ $user->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <p class="text-xs text-gray-500 mt-1">Sélectionnez une ou plusieurs personnes.</p>
+                                                    </div>
+
+                                                    <div>
                                                         <label>Commentaire</label>
                                                         <textarea name="commentaire" class="mt-1 w-full border rounded">{{ old('commentaire', $task->commentaire) }}</textarea>
                                                     </div>
@@ -244,6 +257,16 @@
                                                     </div>
 
                                                     <div>
+                                                        <label class="block text-sm font-medium">Responsables</label>
+                                                        <select name="responsables[]" multiple class="mt-1 w-full border rounded">
+                                                            @foreach($users as $user)
+                                                                <option value="{{ $user->id }}" @selected(in_array($user->id, old('responsables', [])))>{{ $user->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <p class="text-xs text-gray-500 mt-1">Sélectionnez une ou plusieurs personnes.</p>
+                                                    </div>
+
+                                                    <div>
                                                         <label>Commentaire</label>
                                                         <textarea name="commentaire" class="mt-1 w-full border rounded"></textarea>
                                                     </div>
@@ -281,7 +304,7 @@
                                                                 <div class="font-semibold">{{ $subTask->titre }}</div>
                                                                 <div class="text-sm text-gray-700">{{ $subTask->description ?? '-' }}</div>
                                                                 <div class="text-xs text-gray-500 mt-1">
-                                                                    Responsables : {{ $subTask->responsables ? implode(', ', $subTask->responsables) : '-' }}
+                                                                    Responsables : {{ $subTask->responsablesNoms ? implode(', ', $subTask->responsablesNoms) : '-' }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -355,6 +378,19 @@
                                                                         <div>
                                                                             <label>Description</label>
                                                                             <textarea name="description" class="mt-1 w-full border rounded">{{ old('description', $subTask->description) }}</textarea>
+                                                                        </div>
+
+                                                                        <div>
+                                                                            <label class="block text-sm font-medium">Responsables</label>
+                                                                            <select name="responsables[]" multiple class="mt-1 w-full border rounded">
+                                                                                @foreach($users as $user)
+                                                                                    <option value="{{ $user->id }}"
+                                                                                        @selected(in_array($user->id, old('responsables', $subTask->responsables ?? [])))>
+                                                                                        {{ $user->name }}
+                                                                                    </option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                            <p class="text-xs text-gray-500 mt-1">Sélectionnez une ou plusieurs personnes.</p>
                                                                         </div>
 
                                                                         <div>
@@ -436,6 +472,16 @@
                 <div>
                     <label>Description</label>
                     <textarea name="description" class="mt-1 w-full border rounded"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">Responsables</label>
+                    <select name="responsables[]" multiple class="mt-1 w-full border rounded">
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}" @selected(in_array($user->id, old('responsables', [])))>{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">Sélectionnez une ou plusieurs personnes.</p>
                 </div>
 
                 <div>
