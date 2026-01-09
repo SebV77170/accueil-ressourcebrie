@@ -1,10 +1,11 @@
 <div class="bg-white shadow rounded p-4 md:hidden">
     <div class="space-y-3">
         @forelse($tasks as $task)
-            <div x-data="{ open: false }" class="border rounded-xl bg-white shadow-sm">
+            <div x-data="{ open: false }" class="border rounded-xl bg-white shadow-sm border-l-4" style="border-left-color: {{ $taskColor }}">
                 <div class="w-full p-4">
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex items-start gap-3">
+                            <span class="mt-2 h-2.5 w-2.5 rounded-full" style="background-color: {{ $taskColor }}"></span>
                             @if($task->subTasksCount === 0)
                                 <form method="POST" action="{{ route('ca.tasks.complete', $task->id) }}">
                                     @csrf
@@ -99,9 +100,10 @@
 
                             <div class="mt-3 space-y-2">
                                 @forelse($task->subTasks as $subTask)
-                                    <div class="rounded-lg border bg-white p-3">
+                                    <div class="rounded-lg border bg-white p-3 border-l-4" style="border-left-color: {{ $subTaskColor }}">
                                         <div class="flex items-start justify-between gap-3">
                                             <div class="flex items-start gap-3">
+                                                <span class="mt-1 h-2.5 w-2.5 rounded-full" style="background-color: {{ $subTaskColor }}"></span>
                                                 <form method="POST" action="{{ route('ca.tasks.subTasks.complete', [$task->id, $subTask->id]) }}">
                                                     @csrf
                                                     @method('PATCH')

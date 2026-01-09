@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'task_color',
+        'sub_task_color',
     ];
 
     /**

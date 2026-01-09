@@ -1,4 +1,8 @@
 <x-app-layout>
+    @php
+        $taskColor = Auth::user()?->task_color ?? '#3B82F6';
+        $subTaskColor = Auth::user()?->sub_task_color ?? '#A855F7';
+    @endphp
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">

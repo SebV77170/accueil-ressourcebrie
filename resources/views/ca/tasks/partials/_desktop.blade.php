@@ -34,6 +34,7 @@
                         <td class="p-2 font-semibold cursor-pointer" @click="open = !open">
                             <div class="flex items-start justify-between">
                                 <div class="flex items-start gap-2">
+                                    <span class="mt-2 h-2.5 w-2.5 rounded-full" style="background-color: {{ $taskColor }}"></span>
                                     @if($task->subTasksCount === 0)
                                         <form method="POST" action="{{ route('ca.tasks.complete', $task->id) }}">
                                             @csrf
@@ -143,10 +144,11 @@
 
                             <div class="mt-4 space-y-3">
                                 @forelse($task->subTasks as $subTask)
-                                    <div class="border rounded p-3 bg-white">
+                                    <div class="border rounded p-3 bg-white border-l-4" style="border-left-color: {{ $subTaskColor }}">
                                         <div class="flex justify-between items-start gap-3">
 
                                             <div class="flex items-start gap-3">
+                                                <span class="mt-1 h-2.5 w-2.5 rounded-full" style="background-color: {{ $subTaskColor }}"></span>
                                                 {{-- COMPLETE SUBTASK --}}
                                                 <form method="POST" action="{{ route('ca.tasks.subTasks.complete', [$task->id, $subTask->id]) }}">
                                                     @csrf
