@@ -66,10 +66,6 @@
                     <p class="text-xs text-gray-500 mt-1">Sélectionnez une ou plusieurs personnes.</p>
                 </div>
 
-                <div>
-                    <label>Commentaire</label>
-                    <textarea name="commentaire" class="mt-1 w-full border rounded">{{ old('commentaire', $task->commentaire) }}</textarea>
-                </div>
             </div>
 
             <div class="mt-4 flex justify-end space-x-2">
@@ -111,10 +107,6 @@
                     <p class="text-xs text-gray-500 mt-1">Sélectionnez une ou plusieurs personnes.</p>
                 </div>
 
-                <div>
-                    <label>Commentaire</label>
-                    <textarea name="commentaire" class="mt-1 w-full border rounded"></textarea>
-                </div>
             </div>
 
             <div class="mt-4 flex justify-end space-x-2">
@@ -193,10 +185,6 @@
                         <p class="text-xs text-gray-500 mt-1">Sélectionnez une ou plusieurs personnes.</p>
                     </div>
 
-                    <div>
-                        <label>Commentaire</label>
-                        <textarea name="commentaire" class="mt-1 w-full border rounded">{{ old('commentaire', $subTask->commentaire) }}</textarea>
-                    </div>
                 </div>
 
                 <div class="mt-4 flex justify-end space-x-2">
@@ -241,10 +229,6 @@
                 <p class="text-xs text-gray-500 mt-1">Sélectionnez une ou plusieurs personnes.</p>
             </div>
 
-            <div>
-                <label>Commentaire</label>
-                <textarea name="commentaire" class="mt-1 w-full border rounded"></textarea>
-            </div>
         </div>
 
         <div class="mt-4 flex justify-end space-x-2">
