@@ -20,31 +20,57 @@ class CaTaskController extends Controller
 
     public function store(StoreTaskRequest $request)
     {
-        $this->service->create($request->validated());
-        return back();
+        return $this->handleAction(function () use ($request) {
+            $this->service->create($request->validated());
+        });
     }
 
     public function update($id, UpdateTaskRequest $request)
     {
-        $this->service->update($id, $request->validated());
-        return back();
+        return $this->handleAction(function () use ($id, $request) {
+            $this->service->update($id, $request->validated());
+        });
     }
 
     public function complete($id)
     {
-        $this->service->toggleComplete($id);
-        return back();
+        return $this->handleAction(function () use ($id) {
+            $this->service->toggleComplete($id);
+        });
     }
 
     public function archive($id)
     {
-        $this->service->archive($id);
-        return back();
+        return $this->handleAction(function () use ($id) {
+            $this->service->archive($id);
+        });
     }
 
     public function destroy($id)
     {
-        $this->service->delete($id);
+        return $this->handleAction(function () use ($id) {
+            $this->service->delete($id);
+        });
+    }
+
+    private function handleAction(callable $action)
+    {
+        try {
+            $action();
+        } catch (\DomainException | \RuntimeException $exception) {
+            return back()
+                ->withErrors(['global' => $exception->getMessage()])
+                ->withInput();
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return back()
+                ->withErrors([
+                    'global' => "Une erreur inattendue est survenue. Merci de réessayer ou de contacter l'équipe.",
+                ])
+                ->withInput();
+        }
+
         return back();
     }
 }

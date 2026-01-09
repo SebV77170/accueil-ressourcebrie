@@ -62,7 +62,7 @@ class TaskService
         $task = $this->repo->find($id);
 
         if (! $task) {
-            throw new \RuntimeException("Task not found");
+            throw new \RuntimeException("Tâche introuvable.");
         }
 
         $task->titre        = $data['titre']        ?? $task->titre;
@@ -78,7 +78,7 @@ class TaskService
         $task = $this->repo->find($id);
 
         if (! $task) {
-            throw new \RuntimeException("Task not found");
+            throw new \RuntimeException("Tâche introuvable.");
         }
 
         $subTasks = $this->subTaskRepo->forTask($id);
@@ -104,7 +104,7 @@ class TaskService
         $task = $this->repo->find($id);
 
         if (! $task) {
-            throw new \RuntimeException("Task not found");
+            throw new \RuntimeException("Tâche introuvable.");
         }
 
         $task->archive();

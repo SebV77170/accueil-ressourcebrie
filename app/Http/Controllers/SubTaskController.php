@@ -12,31 +12,57 @@ class SubTaskController extends Controller
 
     public function store($taskId, StoreSubTaskRequest $request)
     {
-        $this->service->create($taskId, $request->validated());
-        return back();
+        return $this->handleAction(function () use ($taskId, $request) {
+            $this->service->create($taskId, $request->validated());
+        });
     }
 
     public function update($taskId, $subTaskId, UpdateSubTaskRequest $request)
     {
-        $this->service->update($taskId, $subTaskId, $request->validated());
-        return back();
+        return $this->handleAction(function () use ($taskId, $subTaskId, $request) {
+            $this->service->update($taskId, $subTaskId, $request->validated());
+        });
     }
 
     public function complete($taskId, $subTaskId)
     {
-        $this->service->toggleComplete($taskId, $subTaskId);
-        return back();
+        return $this->handleAction(function () use ($taskId, $subTaskId) {
+            $this->service->toggleComplete($taskId, $subTaskId);
+        });
     }
 
     public function archive($taskId, $subTaskId)
     {
-        $this->service->archive($taskId, $subTaskId);
-        return back();
+        return $this->handleAction(function () use ($taskId, $subTaskId) {
+            $this->service->archive($taskId, $subTaskId);
+        });
     }
 
     public function destroy($taskId, $subTaskId)
     {
-        $this->service->delete($taskId, $subTaskId);
+        return $this->handleAction(function () use ($taskId, $subTaskId) {
+            $this->service->delete($taskId, $subTaskId);
+        });
+    }
+
+    private function handleAction(callable $action)
+    {
+        try {
+            $action();
+        } catch (\DomainException | \RuntimeException $exception) {
+            return back()
+                ->withErrors(['global' => $exception->getMessage()])
+                ->withInput();
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return back()
+                ->withErrors([
+                    'global' => "Une erreur inattendue est survenue. Merci de réessayer ou de contacter l'équipe.",
+                ])
+                ->withInput();
+        }
+
         return back();
     }
 }
