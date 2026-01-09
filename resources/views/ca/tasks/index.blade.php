@@ -27,26 +27,38 @@
                 <div class="space-y-3">
                     @forelse($tasks as $task)
                         <div x-data="{ open: false }" class="border rounded-xl bg-white shadow-sm">
-                            <button type="button" class="w-full p-4 text-left" @click="open = !open">
+                            <div class="w-full p-4">
                                 <div class="flex items-start justify-between gap-4">
-                                    <div>
-                                        <p class="text-base font-semibold text-gray-900">{{ $task->titre }}</p>
-                                        <p class="mt-1 text-xs text-gray-500">
-                                            {{ $task->completedSubTasksCount }} / {{ $task->subTasksCount }} sous-tâches complétées
-                                        </p>
-                                        <p class="mt-1 text-xs text-gray-500">
-                                            Responsables : {{ $task->responsablesNoms ? implode(', ', $task->responsablesNoms) : '-' }}
-                                        </p>
+                                    <div class="flex items-start gap-3">
+                                        @if($task->subTasksCount === 0)
+                                            <form method="POST" action="{{ route('ca.tasks.complete', $task->id) }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit"
+                                                    class="flex h-6 w-6 items-center justify-center rounded border {{ $task->estTerminee ? 'bg-green-500 text-white' : '' }}">
+                                                    @if($task->estTerminee) ✓ @endif
+                                                </button>
+                                            </form>
+                                        @endif
+                                        <button type="button" class="text-left" @click="open = !open">
+                                            <p class="text-base font-semibold text-gray-900">{{ $task->titre }}</p>
+                                            <p class="mt-1 text-xs text-gray-500">
+                                                {{ $task->completedSubTasksCount }} / {{ $task->subTasksCount }} sous-tâches complétées
+                                            </p>
+                                            <p class="mt-1 text-xs text-gray-500">
+                                                Responsables : {{ $task->responsablesNoms ? implode(', ', $task->responsablesNoms) : '-' }}
+                                            </p>
+                                        </button>
                                     </div>
-                                    <div class="flex flex-col items-end gap-2 text-xs text-gray-500">
+                                    <button type="button" class="flex flex-col items-end gap-2 text-xs text-gray-500" @click="open = !open">
                                         <span x-text="open ? 'Masquer' : 'Voir'"></span>
                                         <span class="flex h-8 w-8 items-center justify-center rounded-full border bg-gray-100 text-base">
                                             <span x-show="!open">+</span>
                                             <span x-show="open">−</span>
                                         </span>
-                                    </div>
+                                    </button>
                                 </div>
-                            </button>
+                            </div>
 
                             <div x-show="open" x-transition.opacity.duration.200ms x-cloak class="border-t px-4 pb-4">
                                 <div class="mt-3 space-y-3 text-sm text-gray-700">
@@ -221,7 +233,19 @@
                                     {{-- TITRE (cliquable) --}}
                                     <td class="p-2 font-semibold cursor-pointer" @click="open = !open">
                                         <div class="flex items-start justify-between">
-                                            <span>{{ $task->titre }}</span>
+                                            <div class="flex items-start gap-2">
+                                                @if($task->subTasksCount === 0)
+                                                    <form method="POST" action="{{ route('ca.tasks.complete', $task->id) }}">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit" @click.stop
+                                                            class="flex h-5 w-5 items-center justify-center rounded border {{ $task->estTerminee ? 'bg-green-500 text-white' : '' }}">
+                                                            @if($task->estTerminee) ✓ @endif
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                <span>{{ $task->titre }}</span>
+                                            </div>
                                             <span class="text-xs text-gray-500" x-text="open ? 'Réduire' : 'Voir'"></span>
                                         </div>
                                         <p class="text-xs text-gray-500 mt-1">

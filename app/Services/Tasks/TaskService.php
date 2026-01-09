@@ -92,7 +92,9 @@ class TaskService
             return $this->repo->update($task);
         }
 
-        $task->uncomplete();
+        $task->estTerminee
+            ? $task->uncomplete()
+            : $task->complete();
 
         return $this->repo->update($task);
     }
