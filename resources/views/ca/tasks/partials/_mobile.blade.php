@@ -1,7 +1,7 @@
 <div class="bg-white shadow rounded p-4 md:hidden">
     <div class="space-y-3">
         @forelse($tasks as $task)
-            <div x-data="{ open: false }" class="border rounded-xl bg-white shadow-sm border-l-4" style="border-left-color: {{ $taskColor }}">
+            <div x-data="taskToggle({{ $task->id }})" class="border rounded-xl bg-white shadow-sm border-l-4" style="border-left-color: {{ $taskColor }}">
                 <div class="w-full p-4">
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex items-start gap-3">

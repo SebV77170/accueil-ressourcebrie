@@ -17,7 +17,7 @@
             @forelse($tasks as $task)
 
                 {{-- IMPORTANT : x-data englobe les 2 tr (tâche + détail) --}}
-                <tbody x-data="{ open: false }" class="border-b">
+                <tbody x-data="taskToggle({{ $task->id }})" class="border-b">
 
                     {{-- LIGNE TÂCHE --}}
                     <tr class="align-top hover:bg-gray-50">
