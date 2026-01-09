@@ -40,7 +40,7 @@
 
         <div x-show="openFilters" x-transition x-cloak class="border-t px-4 py-3 text-sm">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <div class="flex flex-wrap gap-2">
+                <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                     @foreach($filters as $key => $label)
                         <a
                             href="{{ route('ca.tasks.index', ['status' => $key, 'per_page' => $perPage, 'responsable' => $responsableId]) }}"
