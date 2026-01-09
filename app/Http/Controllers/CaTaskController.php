@@ -5,17 +5,35 @@ use App\Services\Tasks\TaskService;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class CaTaskController extends Controller
 {
     public function __construct(private TaskService $service) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = $this->service->list();
+        $status = $request->query('status', 'pending');
+        $perPage = (int) $request->query('per_page', 10);
+        $allowedPerPage = [5, 10, 20, 50];
+
+        if (! in_array($perPage, $allowedPerPage, true)) {
+            $perPage = 10;
+        }
+
+        if (! in_array($status, ['pending', 'completed', 'archived'], true)) {
+            $status = 'pending';
+        }
+
+        $tasks = $this->service->list(
+            $status,
+            $perPage,
+            (int) $request->query('page', 1),
+        );
+        $tasks->appends($request->query());
         $users = User::orderBy('name')->get();
 
-        return view('ca.tasks.index', compact('tasks', 'users'));
+        return view('ca.tasks.index', compact('tasks', 'users', 'status', 'perPage'));
     }
 
     public function store(StoreTaskRequest $request)

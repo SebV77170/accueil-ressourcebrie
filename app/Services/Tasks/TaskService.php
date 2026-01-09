@@ -4,6 +4,7 @@ namespace App\Services\Tasks;
 use App\Domain\Tasks\Entities\Task;
 use App\Domain\Tasks\Repositories\TaskRepository;
 use App\Domain\Tasks\Repositories\SubTaskRepository;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TaskService
 {
@@ -12,9 +13,9 @@ class TaskService
         private SubTaskRepository $subTaskRepo,
     ) {}
 
-    public function list()
+    public function list(?string $status = null, int $perPage = 10, ?int $page = null): LengthAwarePaginator
     {
-        $tasks = $this->repo->all();
+        $tasks = collect($this->repo->all());
 
         foreach ($tasks as $task) {
             $task->subTasks = $this->subTaskRepo->forTask($task->id);
@@ -37,7 +38,25 @@ class TaskService
             }
         }
 
-        return $tasks;
+        $tasks = $tasks->filter(function ($task) use ($status) {
+            return match ($status) {
+                'pending' => ! $task->estArchivee && ! $task->estTerminee,
+                'completed' => ! $task->estArchivee && $task->estTerminee,
+                'archived' => $task->estArchivee,
+                default => true,
+            };
+        })->values();
+
+        $page = $page ?: LengthAwarePaginator::resolveCurrentPage();
+        $paginatedItems = $tasks->forPage($page, $perPage)->values();
+
+        return new LengthAwarePaginator(
+            $paginatedItems,
+            $tasks->count(),
+            $perPage,
+            $page,
+            ['path' => LengthAwarePaginator::resolveCurrentPath()],
+        );
     }
 
     public function create(array $data): Task

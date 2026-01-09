@@ -20,6 +20,10 @@
 
             {{-- DESKTOP VIEW --}}
             @include('ca.tasks.partials._desktop')
+
+            <div class="mt-4">
+                {{ $tasks->links() }}
+            </div>
         </div>
     </div>
 
