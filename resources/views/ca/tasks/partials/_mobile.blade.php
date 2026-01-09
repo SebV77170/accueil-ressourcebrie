@@ -15,6 +15,10 @@
                                         @if($task->estTerminee) ✓ @endif
                                     </button>
                                 </form>
+                            @elseif($task->subTasksCount > 0 && $task->completedSubTasksCount === $task->subTasksCount)
+                                <span class="flex h-6 w-6 items-center justify-center rounded border bg-green-500 text-white" aria-label="Tâche terminée">
+                                    ✓
+                                </span>
                             @endif
                             <button type="button" class="text-left" @click="open = !open">
                                 <p class="text-base font-semibold text-gray-900">{{ $task->titre }}</p>
