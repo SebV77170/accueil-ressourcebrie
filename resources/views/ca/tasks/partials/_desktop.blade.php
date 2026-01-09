@@ -85,41 +85,73 @@
                         </td>
 
                         {{-- ACTIONS (ne doit pas toggler) --}}
-                        <td class="p-2 text-right space-x-1">
+                        <td class="p-2 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                {{-- COMMENTS TASK --}}
+                                <button
+                                    type="button"
+                                    x-data
+                                    @click="$dispatch('open-modal', 'comments-{{ $task->id }}')"
+                                    class="px-2 py-1 bg-indigo-500 text-white rounded">
+                                    💬({{ $task->commentsCount }})
+                                </button>
 
-                            {{-- COMMENTS TASK --}}
-                            <button
-                                type="button"
-                                x-data
-                                @click="$dispatch('open-modal', 'comments-{{ $task->id }}')"
-                                class="px-2 py-1 bg-indigo-500 text-white rounded">
-                                💬({{ $task->commentsCount }})
-                            </button>
+                                {{-- ACTIONS MENU --}}
+                                <div class="relative" x-data="{ openActions: false }">
+                                    <button
+                                        type="button"
+                                        class="px-2 py-1 text-gray-500 hover:text-black"
+                                        @click.stop="openActions = !openActions"
+                                    >
+                                        ⋯
+                                    </button>
 
-                            {{-- EDIT TASK --}}
-                            <button
-                                type="button"
-                                x-data
-                                @click="$dispatch('open-modal', 'edit-task-{{ $task->id }}')"
-                                class="px-2 py-1 bg-yellow-400 rounded">
-                                ✏
-                            </button>
+                                    <div
+                                        x-show="openActions"
+                                        x-transition
+                                        @click.outside="openActions = false"
+                                        style="display:none"
+                                        class="absolute right-0 mt-2 w-40 rounded border bg-white text-left text-sm shadow z-20"
+                                    >
+                                        <button
+                                            type="button"
+                                            class="block w-full px-4 py-2 hover:bg-gray-100"
+                                            @click="
+                                                openActions = false;
+                                                $dispatch('open-modal', 'edit-task-{{ $task->id }}')
+                                            "
+                                        >
+                                            Modifier
+                                        </button>
 
-                            {{-- ARCHIVE TASK --}}
-                            @if(! $task->estArchivee)
-                                <form class="inline" method="POST" action="{{ route('ca.tasks.archive', $task->id) }}">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="px-2 py-1 bg-gray-400 rounded">📦</button>
-                                </form>
-                            @endif
+                                        @if(! $task->estArchivee)
+                                            <form method="POST" action="{{ route('ca.tasks.archive', $task->id) }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button
+                                                    type="submit"
+                                                    class="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                                                    @click="openActions = false"
+                                                >
+                                                    Archiver
+                                                </button>
+                                            </form>
+                                        @endif
 
-                            {{-- DELETE TASK --}}
-                            <form class="inline" method="POST" action="{{ route('ca.tasks.destroy', $task->id) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="px-2 py-1 bg-red-500 text-white rounded">🗑</button>
-                            </form>
+                                        <form method="POST" action="{{ route('ca.tasks.destroy', $task->id) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button
+                                                type="submit"
+                                                class="block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
+                                                @click="openActions = false"
+                                            >
+                                                Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
 
@@ -169,8 +201,7 @@
                                             </div>
 
                                             {{-- ACTIONS SUBTASK --}}
-                                            <div class="space-x-1">
-
+                                            <div class="flex items-center gap-2">
                                                 {{-- COMMENTS SUBTASK --}}
                                                 <button
                                                     type="button"
@@ -180,30 +211,61 @@
                                                     💬({{ $subTask->commentsCount }})
                                                 </button>
 
-                                                {{-- EDIT SUBTASK --}}
-                                                <button
-                                                    type="button"
-                                                    x-data
-                                                    @click="$dispatch('open-modal', 'edit-subtask-{{ $task->id }}-{{ $subTask->id }}')"
-                                                    class="px-2 py-1 bg-yellow-400 rounded">
-                                                    ✏
-                                                </button>
+                                                {{-- ACTIONS MENU --}}
+                                                <div class="relative" x-data="{ openActions: false }">
+                                                    <button
+                                                        type="button"
+                                                        class="px-2 py-1 text-gray-500 hover:text-black"
+                                                        @click.stop="openActions = !openActions"
+                                                    >
+                                                        ⋯
+                                                    </button>
 
-                                                {{-- ARCHIVE SUBTASK --}}
-                                                @if(! $subTask->estArchivee)
-                                                    <form class="inline" method="POST" action="{{ route('ca.tasks.subTasks.archive', [$task->id, $subTask->id]) }}">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <button type="submit" class="px-2 py-1 bg-gray-400 rounded">📦</button>
-                                                    </form>
-                                                @endif
+                                                    <div
+                                                        x-show="openActions"
+                                                        x-transition
+                                                        @click.outside="openActions = false"
+                                                        style="display:none"
+                                                        class="absolute right-0 mt-2 w-40 rounded border bg-white text-left text-sm shadow z-20"
+                                                    >
+                                                        <button
+                                                            type="button"
+                                                            class="block w-full px-4 py-2 hover:bg-gray-100"
+                                                            @click="
+                                                                openActions = false;
+                                                                $dispatch('open-modal', 'edit-subtask-{{ $task->id }}-{{ $subTask->id }}')
+                                                            "
+                                                        >
+                                                            Modifier
+                                                        </button>
 
-                                                {{-- DELETE SUBTASK --}}
-                                                <form class="inline" method="POST" action="{{ route('ca.tasks.subTasks.destroy', [$task->id, $subTask->id]) }}">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="px-2 py-1 bg-red-500 text-white rounded">🗑</button>
-                                                </form>
+                                                        @if(! $subTask->estArchivee)
+                                                            <form method="POST" action="{{ route('ca.tasks.subTasks.archive', [$task->id, $subTask->id]) }}">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button
+                                                                    type="submit"
+                                                                    class="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                                                                    @click="openActions = false"
+                                                                >
+                                                                    Archiver
+                                                                </button>
+                                                            </form>
+                                                        @endif
+
+                                                        <form method="POST" action="{{ route('ca.tasks.subTasks.destroy', [$task->id, $subTask->id]) }}">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button
+                                                                type="submit"
+                                                                class="block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
+                                                                @click="openActions = false"
+                                                            >
+                                                                Supprimer
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 

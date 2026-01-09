@@ -51,7 +51,7 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             <button
                                 type="button"
                                 x-data
@@ -60,27 +60,60 @@
                                 💬({{ $task->commentsCount }})
                             </button>
 
-                            <button
-                                type="button"
-                                x-data
-                                @click="$dispatch('open-modal', 'edit-task-{{ $task->id }}')"
-                                class="rounded bg-yellow-400 px-2 py-1 text-xs">
-                                ✏
-                            </button>
+                            <div class="relative" x-data="{ openActions: false }">
+                                <button
+                                    type="button"
+                                    class="rounded border px-2 py-1 text-xs text-gray-500 hover:text-gray-900"
+                                    @click.stop="openActions = !openActions"
+                                >
+                                    ⋯
+                                </button>
 
-                            @if(! $task->estArchivee)
-                                <form method="POST" action="{{ route('ca.tasks.archive', $task->id) }}">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="rounded bg-gray-400 px-2 py-1 text-xs">📦</button>
-                                </form>
-                            @endif
+                                <div
+                                    x-show="openActions"
+                                    x-transition
+                                    @click.outside="openActions = false"
+                                    style="display:none"
+                                    class="absolute right-0 mt-2 w-36 rounded border bg-white text-left text-xs shadow z-20"
+                                >
+                                    <button
+                                        type="button"
+                                        class="block w-full px-3 py-2 hover:bg-gray-100"
+                                        @click="
+                                            openActions = false;
+                                            $dispatch('open-modal', 'edit-task-{{ $task->id }}')
+                                        "
+                                    >
+                                        Modifier
+                                    </button>
 
-                            <form method="POST" action="{{ route('ca.tasks.destroy', $task->id) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="rounded bg-red-500 px-2 py-1 text-xs text-white">🗑</button>
-                            </form>
+                                    @if(! $task->estArchivee)
+                                        <form method="POST" action="{{ route('ca.tasks.archive', $task->id) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button
+                                                type="submit"
+                                                class="block w-full px-3 py-2 text-left hover:bg-gray-100"
+                                                @click="openActions = false"
+                                            >
+                                                Archiver
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                    <form method="POST" action="{{ route('ca.tasks.destroy', $task->id) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button
+                                            type="submit"
+                                            class="block w-full px-3 py-2 text-left text-red-600 hover:bg-gray-100"
+                                            @click="openActions = false"
+                                        >
+                                            Supprimer
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="rounded-lg bg-gray-50 p-3">
@@ -122,7 +155,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="mt-2 flex flex-wrap gap-2 text-xs">
+                                        <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
                                             <button
                                                 type="button"
                                                 x-data
@@ -131,27 +164,60 @@
                                                 💬({{ $subTask->commentsCount }})
                                             </button>
 
-                                            <button
-                                                type="button"
-                                                x-data
-                                                @click="$dispatch('open-modal', 'edit-subtask-{{ $task->id }}-{{ $subTask->id }}')"
-                                                class="rounded bg-yellow-400 px-2 py-1">
-                                                ✏
-                                            </button>
+                                            <div class="relative" x-data="{ openActions: false }">
+                                                <button
+                                                    type="button"
+                                                    class="rounded border px-2 py-1 text-xs text-gray-500 hover:text-gray-900"
+                                                    @click.stop="openActions = !openActions"
+                                                >
+                                                    ⋯
+                                                </button>
 
-                                            @if(! $subTask->estArchivee)
-                                                <form method="POST" action="{{ route('ca.tasks.subTasks.archive', [$task->id, $subTask->id]) }}">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit" class="rounded bg-gray-400 px-2 py-1">📦</button>
-                                                </form>
-                                            @endif
+                                                <div
+                                                    x-show="openActions"
+                                                    x-transition
+                                                    @click.outside="openActions = false"
+                                                    style="display:none"
+                                                    class="absolute right-0 mt-2 w-36 rounded border bg-white text-left text-xs shadow z-20"
+                                                >
+                                                    <button
+                                                        type="button"
+                                                        class="block w-full px-3 py-2 hover:bg-gray-100"
+                                                        @click="
+                                                            openActions = false;
+                                                            $dispatch('open-modal', 'edit-subtask-{{ $task->id }}-{{ $subTask->id }}')
+                                                        "
+                                                    >
+                                                        Modifier
+                                                    </button>
 
-                                            <form method="POST" action="{{ route('ca.tasks.subTasks.destroy', [$task->id, $subTask->id]) }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="rounded bg-red-500 px-2 py-1 text-white">🗑</button>
-                                            </form>
+                                                    @if(! $subTask->estArchivee)
+                                                        <form method="POST" action="{{ route('ca.tasks.subTasks.archive', [$task->id, $subTask->id]) }}">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button
+                                                                type="submit"
+                                                                class="block w-full px-3 py-2 text-left hover:bg-gray-100"
+                                                                @click="openActions = false"
+                                                            >
+                                                                Archiver
+                                                            </button>
+                                                        </form>
+                                                    @endif
+
+                                                    <form method="POST" action="{{ route('ca.tasks.subTasks.destroy', [$task->id, $subTask->id]) }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button
+                                                            type="submit"
+                                                            class="block w-full px-3 py-2 text-left text-red-600 hover:bg-gray-100"
+                                                            @click="openActions = false"
+                                                        >
+                                                            Supprimer
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="mt-2 flex justify-between text-[11px] text-gray-500">
