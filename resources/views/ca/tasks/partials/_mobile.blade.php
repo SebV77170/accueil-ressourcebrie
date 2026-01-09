@@ -21,9 +21,14 @@
                                 </span>
                             @endif
                             <button type="button" class="text-left" @click="open = !open">
-                                <p class="text-base font-semibold text-gray-900">{{ $task->titre }}</p>
+                                <p class="text-base font-semibold text-gray-900">
+                                    {{ $task->titre }}
+                                    @if($responsableId && $task->visibleSubTasksCount > 0 && $task->subTasksCount !== $task->visibleSubTasksCount)
+                                        <span class="text-xs text-indigo-600">Filtré</span>
+                                    @endif
+                                </p>
                                 <p class="mt-1 text-xs text-gray-500">
-                                    {{ $task->completedSubTasksCount }} / {{ $task->subTasksCount }} sous-tâches complétées
+                                    {{ $task->visibleCompletedSubTasksCount }} / {{ $task->visibleSubTasksCount }} sous-tâches complétées
                                 </p>
                                 <p class="mt-1 text-xs text-gray-500">
                                     Responsables : {{ $task->responsablesNoms ? implode(', ', $task->responsablesNoms) : '-' }}
@@ -136,7 +141,7 @@
                             </div>
 
                             <div class="mt-3 space-y-2">
-                                @forelse($task->subTasks as $subTask)
+                                @forelse($task->visibleSubTasks as $subTask)
                                     <div class="rounded-lg border bg-white p-3 border-l-4" style="border-left-color: {{ $subTaskColor }}">
                                         <div class="flex items-start justify-between gap-3">
                                             <div class="flex items-start gap-3">

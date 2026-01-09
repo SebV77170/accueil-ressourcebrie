@@ -50,19 +50,22 @@
                                         </span>
                                     @endif
                                     <span>{{ $task->titre }}</span>
+                                    @if($responsableId && $task->visibleSubTasksCount > 0 && $task->subTasksCount !== $task->visibleSubTasksCount)
+                                        <span class="text-xs text-indigo-600">Filtré</span>
+                                    @endif
                                 </div>
                                 <span class="text-xs text-gray-500" x-text="open ? 'Réduire' : 'Voir'"></span>
                             </div>
                             <p class="text-xs text-gray-500 mt-1">
-                                {{ $task->completedSubTasksCount }} / {{ $task->subTasksCount }} sous-tâches complétées
+                                {{ $task->visibleCompletedSubTasksCount }} / {{ $task->visibleSubTasksCount }} sous-tâches complétées
                             </p>
                         </td>
 
                         {{-- SOUS-TACHES (compteur) --}}
                         <td class="p-2">
-                            @if($task->subTasksCount)
-                                <span class="font-semibold">{{ $task->completedSubTasksCount }}</span>
-                                / {{ $task->subTasksCount }}
+                            @if($task->visibleSubTasksCount)
+                                <span class="font-semibold">{{ $task->visibleCompletedSubTasksCount }}</span>
+                                / {{ $task->visibleSubTasksCount }}
                             @else
                                 <span class="text-gray-500">Aucune</span>
                             @endif
@@ -179,7 +182,7 @@
                             </div>
 
                             <div class="mt-4 space-y-3">
-                                @forelse($task->subTasks as $subTask)
+                                @forelse($task->visibleSubTasks as $subTask)
                                     <div class="border rounded p-3 bg-white border-l-4" style="border-left-color: {{ $subTaskColor }}">
                                         <div class="flex justify-between items-start gap-3">
 

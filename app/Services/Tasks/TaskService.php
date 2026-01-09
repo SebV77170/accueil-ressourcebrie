@@ -13,7 +13,12 @@ class TaskService
         private SubTaskRepository $subTaskRepo,
     ) {}
 
-    public function list(?string $status = null, int $perPage = 10, ?int $page = null): LengthAwarePaginator
+    public function list(
+        ?string $status = null,
+        int $perPage = 10,
+        ?int $page = null,
+        ?int $responsableId = null,
+    ): LengthAwarePaginator
     {
         $tasks = collect($this->repo->all());
 
@@ -36,6 +41,10 @@ class TaskService
                     $this->repo->update($task);
                 }
             }
+
+            $task->visibleSubTasks = $task->subTasks;
+            $task->visibleSubTasksCount = $task->subTasksCount;
+            $task->visibleCompletedSubTasksCount = $task->completedSubTasksCount;
         }
 
         $tasks = $tasks->filter(function ($task) use ($status) {
@@ -46,6 +55,29 @@ class TaskService
                 default => true,
             };
         })->values();
+
+        if ($responsableId) {
+            $tasks = $tasks->filter(function ($task) use ($responsableId) {
+                $taskMatch = in_array($responsableId, $task->responsables ?? [], true);
+                $subTaskMatch = collect($task->subTasks)
+                    ->contains(fn ($subTask) => in_array($responsableId, $subTask->responsables ?? [], true));
+
+                return $taskMatch || $subTaskMatch;
+            })->values();
+
+            $tasks = $tasks->map(function ($task) use ($responsableId) {
+                $task->visibleSubTasks = array_values(array_filter(
+                    $task->subTasks,
+                    fn ($subTask) => in_array($responsableId, $subTask->responsables ?? [], true),
+                ));
+                $task->visibleSubTasksCount = count($task->visibleSubTasks);
+                $task->visibleCompletedSubTasksCount = collect($task->visibleSubTasks)
+                    ->filter(fn ($subTask) => $subTask->estTerminee)
+                    ->count();
+
+                return $task;
+            })->values();
+        }
 
         $page = $page ?: LengthAwarePaginator::resolveCurrentPage();
         $paginatedItems = $tasks->forPage($page, $perPage)->values();

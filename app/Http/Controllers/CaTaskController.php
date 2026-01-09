@@ -13,27 +13,30 @@ class CaTaskController extends Controller
 
     public function index(Request $request)
     {
-        $status = $request->query('status', 'pending');
+        $status = $request->query('status', 'all');
         $perPage = (int) $request->query('per_page', 10);
+        $responsableId = $request->query('responsable');
+        $responsableId = $responsableId !== null ? (int) $responsableId : null;
         $allowedPerPage = [5, 10, 20, 50];
 
         if (! in_array($perPage, $allowedPerPage, true)) {
             $perPage = 10;
         }
 
-        if (! in_array($status, ['pending', 'completed', 'archived'], true)) {
-            $status = 'pending';
+        if (! in_array($status, ['pending', 'completed', 'archived', 'all'], true)) {
+            $status = 'all';
         }
 
         $tasks = $this->service->list(
             $status,
             $perPage,
             (int) $request->query('page', 1),
+            $responsableId,
         );
         $tasks->appends($request->query());
         $users = User::orderBy('name')->get();
 
-        return view('ca.tasks.index', compact('tasks', 'users', 'status', 'perPage'));
+        return view('ca.tasks.index', compact('tasks', 'users', 'status', 'perPage', 'responsableId'));
     }
 
     public function store(StoreTaskRequest $request)
