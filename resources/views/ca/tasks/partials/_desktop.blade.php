@@ -20,7 +20,7 @@
                 <tbody x-data="taskToggle({{ $task->id }})" class="border-b">
 
                     {{-- LIGNE TÂCHE --}}
-                    <tr class="align-top hover:bg-gray-50">
+                    <tr class="align-top" style="background-color: {{ $taskBackgroundColor }}">
 
                         {{-- TOGGLE (seulement ici) --}}
                         <td class="p-2 cursor-pointer" @click="open = !open">

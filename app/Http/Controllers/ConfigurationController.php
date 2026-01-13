@@ -20,6 +20,7 @@ class ConfigurationController extends Controller
         $validated = $request->validate([
             'task_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'sub_task_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'task_background_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ]);
 
         $request->user()->update($validated);

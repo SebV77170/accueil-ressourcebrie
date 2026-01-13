@@ -1,6 +1,7 @@
 <x-app-layout>
     @php
         $taskColor = Auth::user()?->task_color ?? '#3B82F6';
+        $taskBackgroundColor = Auth::user()?->task_background_color ?? '#FFFFFF';
         $subTaskColor = Auth::user()?->sub_task_color ?? '#A855F7';
     @endphp
 

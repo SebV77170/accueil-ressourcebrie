@@ -49,6 +49,32 @@
                         </div>
 
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Couleur de fond des tâches</label>
+                            <div class="mt-2 flex flex-wrap items-center gap-4">
+                                <input
+                                    id="task_background_color"
+                                    name="task_background_color"
+                                    type="color"
+                                    value="{{ old('task_background_color', $user->task_background_color) }}"
+                                    class="h-10 w-16 rounded border-gray-300 dark:border-gray-700">
+                                <div class="flex flex-wrap gap-2" data-color-palette="task_background_color">
+                                    @foreach(['#3B82F6', '#22C55E', '#F97316', '#EF4444', '#14B8A6', '#8B5CF6', '#0EA5E9'] as $color)
+                                        <button
+                                            type="button"
+                                            class="h-7 w-7 rounded-full border border-gray-200"
+                                            style="background-color: {{ $color }}"
+                                            data-color-value="{{ $color }}"
+                                            aria-label="Couleur {{ $color }}">
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @error('task_background_color')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Couleur des sous-tâches</label>
                             <div class="mt-2 flex flex-wrap items-center gap-4">
                                 <input

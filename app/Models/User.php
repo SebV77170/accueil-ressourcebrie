@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'task_color',
         'sub_task_color',
+        'task_background_color',
     ];
 
     /**
