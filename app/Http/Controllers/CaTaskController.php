@@ -72,6 +72,13 @@ class CaTaskController extends Controller
         });
     }
 
+    public function unarchive($id)
+    {
+        return $this->handleAction(function () use ($id) {
+            $this->service->unarchive($id);
+        });
+    }
+
     public function destroy($id)
     {
         return $this->handleAction(function () use ($id) {

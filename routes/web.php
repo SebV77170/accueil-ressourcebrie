@@ -53,6 +53,7 @@ Route::prefix('ca/tasks')->name('ca.tasks.')->group(function () {
 
     Route::patch('/{id}/complete', [CaTaskController::class, 'complete'])->name('complete');
     Route::patch('/{id}/archive', [CaTaskController::class, 'archive'])->name('archive');
+    Route::patch('/{id}/unarchive', [CaTaskController::class, 'unarchive'])->name('unarchive');
 
     Route::delete('/{id}', [CaTaskController::class, 'destroy'])->name('destroy');
 });

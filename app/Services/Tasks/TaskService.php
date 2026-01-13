@@ -170,6 +170,19 @@ class TaskService
         return $this->repo->update($task);
     }
 
+    public function unarchive(int $id): Task
+    {
+        $task = $this->repo->find($id);
+
+        if (! $task) {
+            throw new \RuntimeException("Tâche introuvable.");
+        }
+
+        $task->unarchive();
+
+        return $this->repo->update($task);
+    }
+
     public function delete(int $id): void
     {
         $this->repo->delete($id);

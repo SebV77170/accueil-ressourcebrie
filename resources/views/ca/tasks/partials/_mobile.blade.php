@@ -108,6 +108,18 @@
                                                 Archiver
                                             </button>
                                         </form>
+                                    @else
+                                        <form method="POST" action="{{ route('ca.tasks.unarchive', $task->id) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button
+                                                type="submit"
+                                                class="block w-full px-3 py-2 text-left hover:bg-gray-100"
+                                                @click="openActions = false"
+                                            >
+                                                Désarchiver
+                                            </button>
+                                        </form>
                                     @endif
 
                                     <form method="POST" action="{{ route('ca.tasks.destroy', $task->id) }}">

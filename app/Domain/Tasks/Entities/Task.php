@@ -43,4 +43,9 @@ class Task
 
         $this->estArchivee = true;
     }
+
+    public function unarchive(): void
+    {
+        $this->estArchivee = false;
+    }
 }
