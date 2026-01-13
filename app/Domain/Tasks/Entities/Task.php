@@ -12,6 +12,7 @@ class Task
 
     public function __construct(
         public ?int $id,
+        public ?int $categoryId,
         public string $titre,
         public ?string $description,
         public ?array $responsables,

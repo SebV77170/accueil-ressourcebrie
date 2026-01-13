@@ -18,6 +18,7 @@ class TaskService
         int $perPage = 10,
         ?int $page = null,
         ?int $responsableId = null,
+        ?int $categoryId = null,
     ): LengthAwarePaginator
     {
         $tasks = collect($this->repo->all());
@@ -79,6 +80,10 @@ class TaskService
             })->values();
         }
 
+        if ($categoryId) {
+            $tasks = $tasks->filter(fn ($task) => $task->categoryId === $categoryId)->values();
+        }
+
         $page = $page ?: LengthAwarePaginator::resolveCurrentPage();
         $paginatedItems = $tasks->forPage($page, $perPage)->values();
 
@@ -95,6 +100,7 @@ class TaskService
     {
         $task = new Task(
             id: null,
+            categoryId: $data['category_id'] ?? null,
             titre: $data['titre'],
             description: $data['description'] ?? null,
             responsables: $data['responsables'] ?? [],
@@ -120,6 +126,7 @@ class TaskService
         $task->description  = $data['description']  ?? $task->description;
         $task->responsables = $data['responsables'] ?? [];
         $task->commentaire  = $data['commentaire']  ?? $task->commentaire;
+        $task->categoryId   = $data['category_id']  ?? $task->categoryId;
 
         return $this->repo->update($task);
     }

@@ -54,6 +54,18 @@
                 </div>
 
                 <div>
+                    <label class="block text-sm font-medium">Catégorie</label>
+                    <select name="category_id" class="mt-1 w-full border rounded" required>
+                        <option value="">Sélectionner une catégorie</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" @selected(old('category_id', $task->categoryId) == $category->id)>
+                                {{ $category->nom }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
                     <label class="block text-sm font-medium">Responsables</label>
                     <select name="responsables[]" multiple class="mt-1 w-full border rounded">
                         @foreach($users as $user)
@@ -217,6 +229,18 @@
             <div>
                 <label>Description</label>
                 <textarea name="description" class="mt-1 w-full border rounded"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Catégorie</label>
+                <select name="category_id" class="mt-1 w-full border rounded" required>
+                    <option value="">Sélectionner une catégorie</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>
+                            {{ $category->nom }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <div>

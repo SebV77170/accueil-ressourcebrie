@@ -28,6 +28,7 @@ class EloquentTaskRepository implements TaskRepository
         $responsables = array_map('intval', $task->responsables ?? []);
 
         $model = TaskModel::create([
+            'category_id'    => $task->categoryId,
             'titre'          => $task->titre,
             'description'    => $task->description,
             'responsables'   => $responsables,
@@ -46,6 +47,7 @@ class EloquentTaskRepository implements TaskRepository
         $responsables = array_map('intval', $task->responsables ?? []);
 
         $model->update([
+            'category_id'    => $task->categoryId,
             'titre'          => $task->titre,
             'description'    => $task->description,
             'responsables'   => $responsables,
@@ -67,6 +69,7 @@ class EloquentTaskRepository implements TaskRepository
     {
         $task = new Task(
             id: $m->id,
+            categoryId: $m->category_id,
             titre: $m->titre,
             description: $m->description,
             responsables: $m->responsables,

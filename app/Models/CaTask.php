@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class CaTask extends Model
 {
     protected $fillable = [
+        'category_id',
         'titre',
         'description',
         'responsables',
@@ -25,6 +26,11 @@ class CaTask extends Model
     public function comments()
     {
         return $this->hasMany(TaskComment::class, 'task_id')->latest();
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function subTasks()

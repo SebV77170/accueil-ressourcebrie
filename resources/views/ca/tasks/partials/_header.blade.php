@@ -12,7 +12,7 @@
     </div>
 
     @php
-        $hasFilters = $status !== 'all' || $responsableId;
+        $hasFilters = $status !== 'all' || $responsableId || $categoryId;
         $filters = [
             'pending' => 'Non complétées',
             'completed' => 'Complétées',
@@ -43,21 +43,21 @@
                 <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                     @foreach($filters as $key => $label)
                         <a
-                            href="{{ route('ca.tasks.index', ['status' => $key, 'per_page' => $perPage, 'responsable' => $responsableId]) }}"
+                            href="{{ route('ca.tasks.index', ['status' => $key, 'per_page' => $perPage, 'responsable' => $responsableId, 'category' => $categoryId]) }}"
                             class="rounded-full border px-3 py-1 text-xs font-semibold {{ $status === $key ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300' }}"
                         >
                             {{ $label }}
                         </a>
                     @endforeach
                     <a
-                        href="{{ route('ca.tasks.index', ['status' => 'all', 'per_page' => $perPage, 'responsable' => $responsableId]) }}"
+                        href="{{ route('ca.tasks.index', ['status' => 'all', 'per_page' => $perPage, 'responsable' => $responsableId, 'category' => $categoryId]) }}"
                         class="rounded-full border px-3 py-1 text-xs font-semibold {{ $status === 'all' ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300' }}"
                     >
                         Toutes
                     </a>
                 </div>
 
-                <form method="GET" action="{{ route('ca.tasks.index') }}" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:items-end">
+                <form method="GET" action="{{ route('ca.tasks.index') }}" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
                     <input type="hidden" name="status" value="{{ $status }}">
 
                     <label class="space-y-1 text-xs font-semibold text-gray-600">
@@ -70,6 +70,21 @@
                             @foreach($users as $user)
                                 <option value="{{ $user->id }}" @selected($responsableId === $user->id)>
                                     {{ $user->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </label>
+
+                    <label class="space-y-1 text-xs font-semibold text-gray-600">
+                        Catégorie
+                        <select
+                            name="category"
+                            class="w-full rounded border px-2 py-1 text-sm"
+                        >
+                            <option value="">Toutes les catégories</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" @selected($categoryId === $category->id)>
+                                    {{ $category->nom }}
                                 </option>
                             @endforeach
                         </select>
@@ -107,6 +122,11 @@
                     @if($responsableId)
                         <span class="rounded-full bg-white px-2 py-0.5">
                             Responsable : {{ $users->firstWhere('id', $responsableId)?->name ?? 'N/A' }}
+                        </span>
+                    @endif
+                    @if($categoryId)
+                        <span class="rounded-full bg-white px-2 py-0.5">
+                            Catégorie : {{ $categories->firstWhere('id', $categoryId)?->nom ?? 'N/A' }}
                         </span>
                     @endif
                 </div>
