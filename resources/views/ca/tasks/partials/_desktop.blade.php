@@ -1,5 +1,5 @@
 <div class="hidden md:block bg-white shadow rounded p-4">
-    <table class="w-full text-sm">
+    <table class="w-full text-sm border-separate border-spacing-y-2">
         <thead>
             <tr class="border-b">
                 <th class="p-2 text-left w-10"></th>
@@ -17,10 +17,11 @@
             @forelse($tasks as $task)
 
                 {{-- IMPORTANT : x-data englobe les 2 tr (tâche + détail) --}}
-                <tbody x-data="taskToggle({{ $task->id }})" class="border-b">
+                <tbody x-data="taskToggle({{ $task->id }})">
 
                     {{-- LIGNE TÂCHE --}}
-                    <tr class="align-top" style="background-color: {{ $taskBackgroundColor }}">
+                    <tr class="align-top border-l-4"
+    style="border-left-color: {{ $taskColor }}; background-color: {{ $taskBackgroundColor }};">
 
                         {{-- TOGGLE (seulement ici) --}}
                         <td class="p-2 cursor-pointer" @click="open = !open">
@@ -34,7 +35,6 @@
                         <td class="p-2 font-semibold cursor-pointer" @click="open = !open">
                             <div class="flex items-start justify-between">
                                 <div class="flex items-start gap-2">
-                                    <span class="mt-2 h-2.5 w-2.5 rounded-full" style="background-color: {{ $taskColor }}"></span>
                                     @if($task->subTasksCount === 0)
                                         <form method="POST" action="{{ route('ca.tasks.complete', $task->id) }}">
                                             @csrf
@@ -48,6 +48,7 @@
                                         <span class="flex h-5 w-5 items-center justify-center rounded border bg-green-500 text-white" aria-label="Tâche terminée">
                                             ✓
                                         </span>
+
                                     @endif
                                     <span>{{ $task->titre }}</span>
                                     @if($responsableId && $task->visibleSubTasksCount > 0 && $task->subTasksCount !== $task->visibleSubTasksCount)
