@@ -53,7 +53,7 @@ class TaskService
                 'pending' => ! $task->estArchivee && ! $task->estTerminee,
                 'completed' => ! $task->estArchivee && $task->estTerminee,
                 'archived' => $task->estArchivee,
-                default => true,
+                default => ! $task->estArchivee,
             };
         })->values();
 
