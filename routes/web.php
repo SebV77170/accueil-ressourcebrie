@@ -27,6 +27,10 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/sites', [SiteController::class, 'index'])->name('sites.index');
     Route::get('/fichiers', [FileManagerController::class, 'index'])->name('files.index');
+    Route::post('/fichiers', [FileManagerController::class, 'store'])->name('files.store');
+    Route::get('/fichiers/telecharger/{path}', [FileManagerController::class, 'download'])
+        ->where('path', '.*')
+        ->name('files.download');
 });
 
 Route::post('/sites', [SiteController::class, 'store'])

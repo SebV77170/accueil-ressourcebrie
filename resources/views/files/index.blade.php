@@ -12,42 +12,82 @@
                     <div>
                         <h3 class="text-lg font-semibold">{{ __('Gestionnaire WebDav AlwaysData') }}</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-300">
-                            {{ __('Glissez-déposez vos fichiers pour les ajouter à votre espace centralisé, puis consultez-les dans la liste ci-dessous. La connexion WebDav pourra ensuite être branchée à cette interface.') }}
+                            {{ __('Glissez-déposez vos fichiers pour les ajouter à votre espace centralisé, puis consultez-les dans la liste ci-dessous. La connexion WebDav s’appuie sur les paramètres définis dans le fichier .env.') }}
                         </p>
                     </div>
 
                     <div class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                         <div class="space-y-4">
-                            <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center transition" data-drop-zone>
-                                <div class="flex flex-col items-center gap-4">
-                                    <div class="h-14 w-14 rounded-full bg-indigo-50 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-300">
-                                        <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-9m0 0 3.75 3.75M12 7l-3.75 3.75" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 16.5A4.5 4.5 0 0015.75 12h-7.5A4.5 4.5 0 003.75 16.5v.75A3.75 3.75 0 007.5 21h9a3.75 3.75 0 003.75-3.75v-.75z" />
-                                        </svg>
+                            <form action="{{ route('files.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                                @csrf
+                                <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center transition" data-drop-zone>
+                                    <div class="flex flex-col items-center gap-4">
+                                        <div class="h-14 w-14 rounded-full bg-indigo-50 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-300">
+                                            <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-9m0 0 3.75 3.75M12 7l-3.75 3.75" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 16.5A4.5 4.5 0 0015.75 12h-7.5A4.5 4.5 0 003.75 16.5v.75A3.75 3.75 0 007.5 21h9a3.75 3.75 0 003.75-3.75v-.75z" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-base font-semibold">{{ __('Déposez vos fichiers ici') }}</p>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Ou cliquez pour sélectionner plusieurs fichiers.') }}</p>
+                                        </div>
+                                        <label class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 transition cursor-pointer">
+                                            <span>{{ __('Ajouter des fichiers') }}</span>
+                                            <input id="fileInput" name="files[]" type="file" class="hidden" multiple>
+                                        </label>
                                     </div>
-                                    <div>
-                                        <p class="text-base font-semibold">{{ __('Déposez vos fichiers ici') }}</p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Ou cliquez pour sélectionner plusieurs fichiers.') }}</p>
-                                    </div>
-                                    <label class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 transition cursor-pointer">
-                                        <span>{{ __('Ajouter des fichiers') }}</span>
-                                        <input id="fileInput" type="file" class="hidden" multiple>
-                                    </label>
                                 </div>
-                            </div>
 
-                            <div class="rounded-xl border border-gray-200 dark:border-gray-700">
-                                <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                                    <h4 class="font-semibold">{{ __('Files en cours') }}</h4>
-                                    <button class="text-sm text-indigo-600 dark:text-indigo-300 font-semibold" type="button" data-clear-list>
-                                        {{ __('Vider la sélection') }}
+                                <div class="rounded-xl border border-gray-200 dark:border-gray-700">
+                                    <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                                        <h4 class="font-semibold">{{ __('Files en cours') }}</h4>
+                                        <button class="text-sm text-indigo-600 dark:text-indigo-300 font-semibold" type="button" data-clear-list>
+                                            {{ __('Vider la sélection') }}
+                                        </button>
+                                    </div>
+                                    <ul class="divide-y divide-gray-200 dark:divide-gray-700" data-file-list>
+                                        <li class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                                            {{ __('Aucun fichier sélectionné pour le moment.') }}
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="flex items-center justify-end">
+                                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 transition">
+                                        {{ __('Téléverser sur WebDav') }}
                                     </button>
                                 </div>
-                                <ul class="divide-y divide-gray-200 dark:divide-gray-700" data-file-list>
-                                    <li class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                                        {{ __('Aucun fichier sélectionné pour le moment.') }}
-                                    </li>
+                            </form>
+
+                            <div class="rounded-xl border border-gray-200 dark:border-gray-700">
+                                <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                                    <h4 class="font-semibold">{{ __('Fichiers disponibles') }}</h4>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ __('Cliquez sur un fichier pour le télécharger depuis votre espace AlwaysData.') }}
+                                    </p>
+                                </div>
+                                <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    @forelse ($files as $file)
+                                        <li class="px-4 py-3 flex items-center justify-between gap-4">
+                                            <div class="text-sm">
+                                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ $file['basename'] }}</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                    {{ number_format($file['size'] / 1024, 1, ',', ' ') }} Ko
+                                                </p>
+                                            </div>
+                                            <a
+                                                href="{{ route('files.download', ['path' => $file['path']]) }}"
+                                                class="text-sm font-semibold text-indigo-600 dark:text-indigo-300"
+                                            >
+                                                {{ __('Télécharger') }}
+                                            </a>
+                                        </li>
+                                    @empty
+                                        <li class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                                            {{ __('Aucun fichier sur WebDav pour le moment.') }}
+                                        </li>
+                                    @endforelse
                                 </ul>
                             </div>
                         </div>
@@ -58,7 +98,7 @@
                                 <div class="space-y-3 text-sm text-gray-600 dark:text-gray-300">
                                     <div class="flex items-start gap-3">
                                         <span class="mt-1 inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
-                                        <p>{{ __('Consulter un fichier : cliquez sur une ligne pour ouvrir un aperçu ou déclencher un téléchargement.') }}</p>
+                                        <p>{{ __('Consulter un fichier : cliquez sur une ligne pour déclencher un téléchargement.') }}</p>
                                     </div>
                                     <div class="flex items-start gap-3">
                                         <span class="mt-1 inline-flex h-2 w-2 rounded-full bg-indigo-500"></span>
@@ -66,7 +106,7 @@
                                     </div>
                                     <div class="flex items-start gap-3">
                                         <span class="mt-1 inline-flex h-2 w-2 rounded-full bg-amber-500"></span>
-                                        <p>{{ __('Suivi des transferts : la barre de progression indiquera l’état des uploads.') }}</p>
+                                        <p>{{ __('Suivi des transferts : le retour de confirmation indiquera l’état des uploads.') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -74,11 +114,8 @@
                             <div class="rounded-xl bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 p-5">
                                 <h4 class="font-semibold mb-2">{{ __('Connexion WebDav') }}</h4>
                                 <p class="text-sm text-gray-600 dark:text-gray-300">
-                                    {{ __('Renseignez les identifiants AlwaysData dans la configuration pour activer la synchronisation directe avec votre espace WebDav.') }}
+                                    {{ __('Définissez WEBDAV_URL, WEBDAV_USERNAME, WEBDAV_PASSWORD et WEBDAV_ROOT dans le fichier .env pour activer la synchronisation.') }}
                                 </p>
-                                <a href="{{ route('configuration.edit') }}" class="mt-3 inline-flex text-sm font-semibold text-indigo-600 dark:text-indigo-300">
-                                    {{ __('Configurer l’accès') }}
-                                </a>
                             </div>
                         </aside>
                     </div>
@@ -134,10 +171,9 @@
                 details.appendChild(name);
                 details.appendChild(meta);
 
-                const action = document.createElement('button');
+                const action = document.createElement('span');
                 action.className = 'text-sm font-semibold text-indigo-600 dark:text-indigo-300';
-                action.type = 'button';
-                action.textContent = 'Prévisualiser';
+                action.textContent = 'Prêt à téléverser';
 
                 item.appendChild(details);
                 item.appendChild(action);
@@ -168,6 +204,7 @@
         dropZone.addEventListener('drop', (event) => {
             event.preventDefault();
             dropZone.classList.remove('border-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-500/10');
+            fileInput.files = event.dataTransfer.files;
             handleFiles(event.dataTransfer.files);
         });
 
