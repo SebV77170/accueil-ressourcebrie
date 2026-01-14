@@ -21,6 +21,9 @@
                     <x-nav-link :href="route('ca.tasks.index')" :active="request()->routeIs('ca.tasks.*')">
                         {{ __('Tâches') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('files.index')" :active="request()->routeIs('files.*')">
+                        {{ __('Fichiers') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -84,6 +87,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('ca.tasks.index')" :active="request()->routeIs('ca.tasks.*')">
                 {{ __('Tâches') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('files.index')" :active="request()->routeIs('files.*')">
+                {{ __('Fichiers') }}
             </x-responsive-nav-link>
 
         </div>
