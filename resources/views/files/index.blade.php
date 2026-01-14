@@ -18,8 +18,7 @@
 
                     <div class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                         <div class="space-y-4">
-                            <form action="{{ route('files.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-                                @csrf
+                            <form data-upload-form class="space-y-4">
                                 <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center transition" data-drop-zone>
                                     <div class="flex flex-col items-center gap-4">
                                         <div class="h-14 w-14 rounded-full bg-indigo-50 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-300">
@@ -53,7 +52,8 @@
                                     </ul>
                                 </div>
 
-                                <div class="flex items-center justify-end">
+                                <div class="flex items-center justify-end gap-3">
+                                    <span class="text-sm text-emerald-600" data-upload-status></span>
                                     <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 transition">
                                         {{ __('Téléverser sur WebDav') }}
                                     </button>
@@ -67,27 +67,10 @@
                                         {{ __('Cliquez sur un fichier pour le télécharger depuis votre espace AlwaysData.') }}
                                     </p>
                                 </div>
-                                <ul class="divide-y divide-gray-200 dark:divide-gray-700">
-                                    @forelse ($files as $file)
-                                        <li class="px-4 py-3 flex items-center justify-between gap-4">
-                                            <div class="text-sm">
-                                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ $file['basename'] }}</p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">
-                                                    {{ number_format($file['size'] / 1024, 1, ',', ' ') }} Ko
-                                                </p>
-                                            </div>
-                                            <a
-                                                href="{{ route('files.download', ['path' => $file['path']]) }}"
-                                                class="text-sm font-semibold text-indigo-600 dark:text-indigo-300"
-                                            >
-                                                {{ __('Télécharger') }}
-                                            </a>
-                                        </li>
-                                    @empty
-                                        <li class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                                            {{ __('Aucun fichier sur WebDav pour le moment.') }}
-                                        </li>
-                                    @endforelse
+                                <ul class="divide-y divide-gray-200 dark:divide-gray-700" data-available-files>
+                                    <li class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                                        {{ __('Chargement des fichiers...') }}
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -129,6 +112,13 @@
         const fileInput = document.getElementById('fileInput');
         const fileList = document.querySelector('[data-file-list]');
         const clearButton = document.querySelector('[data-clear-list]');
+        const uploadForm = document.querySelector('[data-upload-form]');
+        const uploadStatus = document.querySelector('[data-upload-status]');
+        const availableList = document.querySelector('[data-available-files]');
+        const apiIndexUrl = @json(route('api.files.index'));
+        const apiStoreUrl = @json(route('api.files.store'));
+        const apiDownloadUrl = @json(route('api.files.download', ['path' => '']))
+            .replace(/\/$/, '');
 
         const formatSize = (bytes) => {
             if (!bytes) return '0 octet';
@@ -142,7 +132,7 @@
             return `${size.toFixed(size < 10 && unitIndex > 0 ? 1 : 0)} ${units[unitIndex]}`;
         };
 
-        const renderList = (files) => {
+        const renderSelection = (files) => {
             fileList.innerHTML = '';
 
             if (!files.length) {
@@ -181,9 +171,59 @@
             });
         };
 
+        const renderAvailable = (files) => {
+            availableList.innerHTML = '';
+
+            if (!files.length) {
+                const emptyItem = document.createElement('li');
+                emptyItem.className = 'px-4 py-3 text-sm text-gray-500 dark:text-gray-400';
+                emptyItem.textContent = 'Aucun fichier sur WebDav pour le moment.';
+                availableList.appendChild(emptyItem);
+                return;
+            }
+
+            files.forEach((file) => {
+                const item = document.createElement('li');
+                item.className = 'px-4 py-3 flex items-center justify-between gap-4';
+
+                const details = document.createElement('div');
+                details.className = 'text-sm';
+
+                const name = document.createElement('p');
+                name.className = 'font-medium text-gray-900 dark:text-gray-100';
+                name.textContent = file.basename || file.path;
+
+                const meta = document.createElement('p');
+                meta.className = 'text-xs text-gray-500 dark:text-gray-400';
+                meta.textContent = formatSize(file.size || 0);
+
+                details.appendChild(name);
+                details.appendChild(meta);
+
+                const link = document.createElement('a');
+                link.className = 'text-sm font-semibold text-indigo-600 dark:text-indigo-300';
+                link.textContent = 'Télécharger';
+                link.href = `${apiDownloadUrl}/${encodeURIComponent(file.path)}`;
+
+                item.appendChild(details);
+                item.appendChild(link);
+                availableList.appendChild(item);
+            });
+        };
+
+        const loadAvailableFiles = async () => {
+            const response = await fetch(apiIndexUrl, { headers: { Accept: 'application/json' } });
+            if (!response.ok) {
+                renderAvailable([]);
+                return;
+            }
+            const data = await response.json();
+            renderAvailable(data.files || []);
+        };
+
         const handleFiles = (files) => {
             if (!files || !files.length) return;
-            renderList(files);
+            renderSelection(files);
         };
 
         dropZone.addEventListener('click', () => fileInput.click());
@@ -210,7 +250,44 @@
 
         clearButton.addEventListener('click', () => {
             fileInput.value = '';
-            renderList([]);
+            renderSelection([]);
         });
+
+        uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            uploadStatus.textContent = '';
+
+            if (!fileInput.files.length) {
+                uploadStatus.textContent = 'Veuillez sélectionner des fichiers.';
+                return;
+            }
+
+            const formData = new FormData();
+            Array.from(fileInput.files).forEach((file) => {
+                formData.append('files[]', file);
+            });
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const response = await fetch(apiStoreUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    Accept: 'application/json',
+                },
+                body: formData,
+            });
+
+            if (!response.ok) {
+                uploadStatus.textContent = 'Le téléversement a échoué.';
+                return;
+            }
+
+            uploadStatus.textContent = 'Téléversement terminé.';
+            fileInput.value = '';
+            renderSelection([]);
+            await loadAvailableFiles();
+        });
+
+        loadAvailableFiles();
     </script>
 </x-app-layout>

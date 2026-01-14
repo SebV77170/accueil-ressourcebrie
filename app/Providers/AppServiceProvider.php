@@ -11,6 +11,8 @@ use App\Domain\Tasks\Repositories\SubTaskRepository;
 use App\Domain\Tasks\Repositories\EloquentSubTaskRepository;
 use App\Domain\Sites\Repositories\SiteRepository;
 use App\Domain\Sites\Repositories\EloquentSiteRepository;
+use App\Contracts\StorageInterface;
+use App\Storage\WebDavStorage;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
             SiteRepository::class,
             EloquentSiteRepository::class
         );
+        $this->app->bind(StorageInterface::class, WebDavStorage::class);
     }
 
     public function boot(): void

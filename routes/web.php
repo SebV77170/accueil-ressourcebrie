@@ -5,6 +5,7 @@ use App\Http\Controllers\ConfigurationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\FileManagerController;
+use App\Http\Controllers\Api\FileController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,10 +28,13 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/sites', [SiteController::class, 'index'])->name('sites.index');
     Route::get('/fichiers', [FileManagerController::class, 'index'])->name('files.index');
-    Route::post('/fichiers', [FileManagerController::class, 'store'])->name('files.store');
-    Route::get('/fichiers/telecharger/{path}', [FileManagerController::class, 'download'])
-        ->where('path', '.*')
-        ->name('files.download');
+    Route::prefix('api/files')->name('api.files.')->group(function () {
+        Route::get('/', [FileController::class, 'index'])->name('index');
+        Route::post('/', [FileController::class, 'store'])->name('store');
+        Route::get('/download/{path}', [FileController::class, 'download'])
+            ->where('path', '.*')
+            ->name('download');
+    });
 });
 
 Route::post('/sites', [SiteController::class, 'store'])
