@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
         'task_color',
         'sub_task_color',
         'task_background_color',
