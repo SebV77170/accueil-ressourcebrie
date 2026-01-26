@@ -36,22 +36,25 @@ class FileManagerController extends Controller
     }
 
     public function upload(Request $request)
-    {
-        $request->validate([
-            'file' => ['required', 'file'],
-            'path' => ['nullable', 'string'],
-        ]);
+{
+    $request->validate([
+        'file' => ['required', 'file'],
+        'path' => ['nullable', 'string'],
+    ]);
 
-        $file = $request->file('file');
+    $file = $request->file('file');
+    $path = (string) $request->input('path', '');
 
-        $this->service->upload(
-            $request->input('path', ''),
-            $file->getClientOriginalName(),
-            $file
-        );
+    $this->service->upload(
+        $path,
+        $file->getClientOriginalName(),
+        $file
+    );
 
-        return response()->json(['status' => 'ok']);
-    }
+    return response()->json(['status' => 'ok']);
+}
+
+
 
     public function createFolder(Request $request)
     {
