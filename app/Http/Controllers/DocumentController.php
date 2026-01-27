@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
@@ -52,6 +53,27 @@ class DocumentController extends Controller
             ->with('status', 'Document supprimé avec succès.');
     }
 
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'document' => ['required', 'file', 'max:10240'],
+        ]);
+
+        /** @var UploadedFile $file */
+        $file = $validated['document'];
+
+        $documentsPath = public_path('documents');
+        File::ensureDirectoryExists($documentsPath);
+
+        $filename = $this->resolveUniqueFilename($documentsPath, $file->getClientOriginalName());
+
+        $file->move($documentsPath, $filename);
+
+        return redirect()
+            ->route('documents.index')
+            ->with('status', 'Document importé avec succès.');
+    }
+
     private function resolveDocumentPath(string $document): string
     {
         $safeName = basename($document);
@@ -62,6 +84,24 @@ class DocumentController extends Controller
         }
 
         return $documentPath;
+    }
+
+    private function resolveUniqueFilename(string $documentsPath, string $originalName): string
+    {
+        $safeName = basename($originalName);
+        $extension = pathinfo($safeName, PATHINFO_EXTENSION);
+        $name = pathinfo($safeName, PATHINFO_FILENAME);
+
+        $candidate = $safeName;
+        $counter = 1;
+
+        while (File::exists($documentsPath . DIRECTORY_SEPARATOR . $candidate)) {
+            $suffix = sprintf('%s-%d', $name, $counter);
+            $candidate = $extension !== '' ? $suffix . '.' . $extension : $suffix;
+            $counter++;
+        }
+
+        return $candidate;
     }
 
     private function formatBytes(int $bytes): string

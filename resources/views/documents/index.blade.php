@@ -19,6 +19,60 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <form
+                        action="{{ route('documents.store') }}"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        class="mb-6"
+                        x-data="{ isDragging: false }"
+                        x-on:dragover.prevent="isDragging = true"
+                        x-on:dragleave.prevent="isDragging = false"
+                        x-on:drop.prevent="
+                            isDragging = false;
+                            if ($event.dataTransfer.files.length) {
+                                $refs.documentInput.files = $event.dataTransfer.files;
+                            }
+                        "
+                    >
+                        @csrf
+                        <div
+                            class="flex flex-col gap-4 rounded-lg border-2 border-dashed p-6 transition"
+                            :class="isDragging ? 'border-blue-500 bg-blue-50/60 dark:bg-blue-950/30' : 'border-gray-200 dark:border-gray-700'"
+                        >
+                            <div>
+                                <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                    {{ __('Importer un document') }}
+                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ __('Glissez-déposez un fichier ou utilisez le bouton pour sélectionner un document (10 Mo max).') }}
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-4">
+                                <label class="inline-flex cursor-pointer items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-blue-500">
+                                    {{ __('Importer') }}
+                                    <input
+                                        x-ref="documentInput"
+                                        type="file"
+                                        name="document"
+                                        class="hidden"
+                                        required
+                                    />
+                                </label>
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-center rounded-md border border-gray-200 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-700 transition hover:border-gray-300 hover:text-gray-900 dark:border-gray-700 dark:text-gray-200"
+                                >
+                                    {{ __('Envoyer') }}
+                                </button>
+                            </div>
+                            @error('document')
+                                <p class="text-xs text-red-600 dark:text-red-300">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                    </form>
+
                     @if (session('status'))
                         <div class="mb-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/40 dark:text-green-200">
                             {{ session('status') }}

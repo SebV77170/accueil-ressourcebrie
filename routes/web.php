@@ -30,6 +30,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/documents-admin', [DocumentController::class, 'index'])->name('documents.index');
+    Route::post('/documents-admin', [DocumentController::class, 'store'])->name('documents.store');
     Route::get('/documents-admin/{document}', [DocumentController::class, 'download'])->name('documents.download');
     Route::delete('/documents-admin/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 });
