@@ -55,14 +55,20 @@ class DocumentController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        if (! $request->hasFile('document')) {
+        /** @var UploadedFile|null $file */
+        $file = $request->file('document');
+
+        if (! $file || ! $request->hasFile('document')) {
             return redirect()
                 ->route('documents.index')
                 ->with('status', 'Aucun document sélectionné.');
         }
 
-        /** @var UploadedFile $file */
-        $file = $request->file('document');
+        if (! $file->isValid()) {
+            return redirect()
+                ->route('documents.index')
+                ->with('status', "Le document n'a pas pu être envoyé (taille ou configuration serveur).");
+        }
 
         $documentsPath = public_path('documents');
         File::ensureDirectoryExists($documentsPath);
