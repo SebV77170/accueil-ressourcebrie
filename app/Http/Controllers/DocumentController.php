@@ -59,6 +59,15 @@ class DocumentController extends Controller
         $file = $request->file('document');
 
         if (! $file || ! $request->hasFile('document')) {
+            $contentLength = (int) $request->server('CONTENT_LENGTH', 0);
+            $postMaxSize = $this->parseSizeToBytes((string) ini_get('post_max_size'));
+
+            if ($contentLength > 0 && $postMaxSize > 0 && $contentLength > $postMaxSize) {
+                return redirect()
+                    ->route('documents.index')
+                    ->with('status', "Le document dépasse la limite d'envoi du serveur ({$this->formatBytes($postMaxSize)}).");
+            }
+
             return redirect()
                 ->route('documents.index')
                 ->with('status', 'Aucun document sélectionné.');
@@ -110,6 +119,25 @@ class DocumentController extends Controller
         }
 
         return $candidate;
+    }
+
+    private function parseSizeToBytes(string $size): int
+    {
+        $normalized = trim($size);
+
+        if ($normalized === '') {
+            return 0;
+        }
+
+        $unit = strtolower(substr($normalized, -1));
+        $value = (int) $normalized;
+
+        return match ($unit) {
+            'g' => $value * 1024 * 1024 * 1024,
+            'm' => $value * 1024 * 1024,
+            'k' => $value * 1024,
+            default => (int) $normalized,
+        };
     }
 
     private function formatBytes(int $bytes): string
