@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
 
@@ -34,7 +34,7 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function download(Request $request, string $document): Response
+    public function download(Request $request, string $document): BinaryFileResponse
     {
         $documentPath = $this->resolveDocumentPath($document);
 
