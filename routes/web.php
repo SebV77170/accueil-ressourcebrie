@@ -29,9 +29,9 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
-    Route::get('/documents/{document}', [DocumentController::class, 'download'])->name('documents.download');
-    Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
+    Route::get('/documents-admin', [DocumentController::class, 'index'])->name('documents.index');
+    Route::get('/documents-admin/{document}', [DocumentController::class, 'download'])->name('documents.download');
+    Route::delete('/documents-admin/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 });
 
 Route::post('/sites', [SiteController::class, 'store'])
