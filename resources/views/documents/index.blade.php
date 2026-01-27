@@ -24,6 +24,7 @@
                         method="POST"
                         enctype="multipart/form-data"
                         class="mb-6"
+                        x-ref="uploadForm"
                         x-data="{ isDragging: false }"
                         x-on:dragover.prevent="isDragging = true"
                         x-on:dragleave.prevent="isDragging = false"
@@ -31,6 +32,7 @@
                             isDragging = false;
                             if ($event.dataTransfer.files.length) {
                                 $refs.documentInput.files = $event.dataTransfer.files;
+                                $refs.uploadForm.submit();
                             }
                         "
                     >
@@ -55,15 +57,9 @@
                                         type="file"
                                         name="document"
                                         class="hidden"
-                                        required
+                                        x-on:change="$refs.uploadForm.submit()"
                                     />
                                 </label>
-                                <button
-                                    type="submit"
-                                    class="inline-flex items-center rounded-md border border-gray-200 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-700 transition hover:border-gray-300 hover:text-gray-900 dark:border-gray-700 dark:text-gray-200"
-                                >
-                                    {{ __('Envoyer') }}
-                                </button>
                             </div>
                             @error('document')
                                 <p class="text-xs text-red-600 dark:text-red-300">
