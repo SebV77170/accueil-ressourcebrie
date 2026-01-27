@@ -30,8 +30,16 @@ class DocumentController extends Controller
                 ->values();
         }
 
+        $postMaxSize = $this->parseSizeToBytes((string) ini_get('post_max_size'));
+        $uploadMaxSize = $this->parseSizeToBytes((string) ini_get('upload_max_filesize'));
+        $uploadLimitBytes = collect([$postMaxSize, $uploadMaxSize])
+            ->filter(fn (int $value) => $value > 0)
+            ->min() ?? 0;
+
         return view('documents.index', [
             'documents' => $documents,
+            'uploadLimitBytes' => $uploadLimitBytes,
+            'uploadLimitLabel' => $uploadLimitBytes > 0 ? $this->formatBytes($uploadLimitBytes) : null,
         ]);
     }
 

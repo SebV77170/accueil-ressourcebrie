@@ -25,12 +25,30 @@
                         enctype="multipart/form-data"
                         class="mb-6"
                         x-ref="uploadForm"
-                        x-data="{ isDragging: false }"
+                        x-data="{
+                            isDragging: false,
+                            uploadError: null,
+                            maxUploadBytes: {{ $uploadLimitBytes }},
+                            maxUploadLabel: '{{ $uploadLimitLabel ?? '' }}',
+                            checkFile(file) {
+                                if (!file) {
+                                    return false;
+                                }
+
+                                if (this.maxUploadBytes > 0 && file.size > this.maxUploadBytes) {
+                                    this.uploadError = `Le document dépasse la limite d'envoi (${this.maxUploadLabel}).`;
+                                    return false;
+                                }
+
+                                this.uploadError = null;
+                                return true;
+                            }
+                        }"
                         x-on:dragover.prevent="isDragging = true"
                         x-on:dragleave.prevent="isDragging = false"
                         x-on:drop.prevent="
                             isDragging = false;
-                            if ($event.dataTransfer.files.length) {
+                            if ($event.dataTransfer.files.length && checkFile($event.dataTransfer.files[0])) {
                                 $refs.documentInput.files = $event.dataTransfer.files;
                                 $refs.uploadForm.submit();
                             }
@@ -46,8 +64,13 @@
                                     {{ __('Importer un document') }}
                                 </p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    {{ __('Glissez-déposez un fichier ou utilisez le bouton pour sélectionner un document (10 Mo max).') }}
+                                    {{ __('Glissez-déposez un fichier ou utilisez le bouton pour sélectionner un document.') }}
                                 </p>
+                                @if ($uploadLimitLabel)
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ __('Limite serveur actuelle : :limit', ['limit' => $uploadLimitLabel]) }}
+                                    </p>
+                                @endif
                             </div>
                             <div class="flex flex-wrap items-center gap-4">
                                 <label class="inline-flex cursor-pointer items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-blue-500">
@@ -57,10 +80,13 @@
                                         type="file"
                                         name="document"
                                         class="hidden"
-                                        x-on:change="$refs.uploadForm.submit()"
+                                        x-on:change="if (checkFile($event.target.files[0])) { $refs.uploadForm.submit(); }"
                                     />
                                 </label>
                             </div>
+                            <template x-if="uploadError">
+                                <p class="text-xs text-red-600 dark:text-red-300" x-text="uploadError"></p>
+                            </template>
                             @error('document')
                                 <p class="text-xs text-red-600 dark:text-red-300">
                                     {{ $message }}
