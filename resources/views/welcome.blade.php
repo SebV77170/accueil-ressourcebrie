@@ -59,7 +59,7 @@
                 <div class="bg-[#FBF3E4] dark:bg-[#1D0002] relative lg:-ml-px -mb-px lg:mb-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg aspect-[335/376] lg:aspect-auto w-full lg:w-[438px] shrink-0 overflow-hidden flex items-center justify-center p-6">
     
     <img
-        src="{{ asset('images/logo.png') }}"
+        src="{{ asset('images/Logo.png') }}"
         alt="Logo {{ config('app.name') }}"
         class="max-w-full max-h-full object-contain"
     >
