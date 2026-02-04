@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ConfigurationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SiteController;
+use App\Http\Controllers\DocumentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,6 +26,13 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/sites', [SiteController::class, 'index'])->name('sites.index');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/documents-admin', [DocumentController::class, 'index'])->name('documents.index');
+    Route::post('/documents-admin', [DocumentController::class, 'store'])->name('documents.store');
+    Route::get('/documents-admin/{document}', [DocumentController::class, 'download'])->name('documents.download');
+    Route::delete('/documents-admin/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 });
 
 Route::post('/sites', [SiteController::class, 'store'])

@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('sites.index')" :active="request()->routeIs('sites.*')">
                         {{ __('Outils') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.*')">
+                        {{ __('Documents') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('ca.tasks.index')" :active="request()->routeIs('ca.tasks.*')">
                         {{ __('Tâches') }}
                     </x-nav-link>
@@ -81,6 +84,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('sites.index')" :active="request()->routeIs('sites.*')">
                 {{ __('Outils') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.*')">
+                {{ __('Documents') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('ca.tasks.index')" :active="request()->routeIs('ca.tasks.*')">
                 {{ __('Tâches') }}
