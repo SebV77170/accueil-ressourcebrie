@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -26,8 +27,10 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
+        $loginIdentifier = (new User)->loginIdentifierColumn();
+
         return [
-            'email' => ['required', 'string', 'email'],
+            $loginIdentifier => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -39,13 +42,15 @@ class LoginRequest extends FormRequest
      */
     public function authenticate(): void
     {
+        $loginIdentifier = (new User)->loginIdentifierColumn();
+
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        if (! Auth::attempt($this->only($loginIdentifier, 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                $loginIdentifier => trans('auth.failed'),
             ]);
         }
 
@@ -59,6 +64,8 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
+        $loginIdentifier = (new User)->loginIdentifierColumn();
+
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
@@ -68,7 +75,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            $loginIdentifier => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -80,6 +87,8 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        $loginIdentifier = (new User)->loginIdentifierColumn();
+
+        return Str::transliterate(Str::lower($this->string($loginIdentifier)).'|'.$this->ip());
     }
 }

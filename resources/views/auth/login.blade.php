@@ -5,11 +5,11 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- Email Address -->
+        <!-- Pseudo -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-label for="pseudo_normalise" :value="__('Pseudo')" />
+            <x-text-input id="pseudo_normalise" class="block mt-1 w-full" type="text" name="pseudo_normalise" :value="old('pseudo_normalise')" required autofocus autocomplete="username" />
+            <x-input-error :messages="$errors->get('pseudo_normalise')" class="mt-2" />
         </div>
 
         <!-- Password -->

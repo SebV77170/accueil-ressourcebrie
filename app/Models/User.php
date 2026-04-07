@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -48,5 +49,33 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getConnectionName(): ?string
+    {
+        $configuredConnection = config('database.auth_connection', parent::getConnectionName());
+        $defaultConnection = config('database.default');
+        $sharedAuthDatabase = config('database.connections.mysql_auth.database');
+        $defaultDatabase = config("database.connections.{$defaultConnection}.database");
+
+        if (
+            $configuredConnection === $defaultConnection
+            && $defaultConnection === 'mysql'
+            && $sharedAuthDatabase
+            && $sharedAuthDatabase !== $defaultDatabase
+        ) {
+            return 'mysql_auth';
+        }
+
+        return $configuredConnection;
+    }
+
+    public function loginIdentifierColumn(): string
+    {
+        if (Schema::connection($this->getConnectionName())->hasColumn($this->getTable(), 'pseudo_normalise')) {
+            return 'pseudo_normalise';
+        }
+
+        return 'email';
     }
 }
