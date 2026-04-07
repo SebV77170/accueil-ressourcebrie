@@ -4,6 +4,8 @@ use Illuminate\Support\Str;
 
 return [
 
+    'auth_connection' => env('AUTH_DB_CONNECTION', env('DB_CONNECTION', 'sqlite')),
+
     /*
     |--------------------------------------------------------------------------
     | Default Database Connection Name
@@ -74,6 +76,26 @@ return [
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'mysql_auth' => [
+            'driver' => 'mysql',
+            'url' => env('AUTH_DB_URL'),
+            'host' => env('AUTH_DB_HOST', env('DB_HOST', '127.0.0.1')),
+            'port' => env('AUTH_DB_PORT', env('DB_PORT', '3306')),
+            'database' => env('AUTH_DB_DATABASE', env('DB_DATABASE', 'laravel')),
+            'username' => env('AUTH_DB_USERNAME', env('DB_USERNAME', 'root')),
+            'password' => env('AUTH_DB_PASSWORD', env('DB_PASSWORD', '')),
+            'unix_socket' => env('AUTH_DB_SOCKET', env('DB_SOCKET', '')),
+            'charset' => env('AUTH_DB_CHARSET', env('DB_CHARSET', 'utf8mb4')),
+            'collation' => env('AUTH_DB_COLLATION', env('DB_COLLATION', 'utf8mb4_unicode_ci')),
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,
